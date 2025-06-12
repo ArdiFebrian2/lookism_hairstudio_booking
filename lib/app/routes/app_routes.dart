@@ -21,6 +21,8 @@ abstract class Routes {
   static const BOOKING = _Paths.BOOKING;
   static const PEMBAYARAN = _Paths.PEMBAYARAN;
   static const RIWAYAT = _Paths.RIWAYAT;
+  static const PROFILE_CUSTOMER = _Paths.PROFILE_CUSTOMER;
+  static const PROFILE_ADMIN = _Paths.PROFILE_ADMIN;
 }
 
 abstract class _Paths {
@@ -43,4 +45,6 @@ abstract class _Paths {
   static const BOOKING = '/booking';
   static const PEMBAYARAN = '/pembayaran';
   static const RIWAYAT = '/riwayat';
+  static const PROFILE_CUSTOMER = '/profile-customer';
+  static const PROFILE_ADMIN = '/profile-admin';
 }

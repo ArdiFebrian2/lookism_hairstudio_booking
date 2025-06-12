@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:lookism_hairstudio_booking/app/modules/booking/views/booking_view.dart';
 import 'package:lookism_hairstudio_booking/app/modules/layanan/views/layanan_view.dart';
 import 'package:lookism_hairstudio_booking/app/modules/pemesanan/views/pemesanan_view.dart';
+import 'package:lookism_hairstudio_booking/app/modules/profile_customer/views/profile_customer_view.dart';
 import 'package:lookism_hairstudio_booking/app/modules/riwayat/views/riwayat_view.dart';
 
 import '../controllers/navbar_customer_controller.dart';
@@ -12,9 +12,10 @@ class NavbarCustomerView extends GetView<NavbarCustomerController> {
 
   final List<Widget> _pages = const [
     LayananView(),
-    BookingView(),
+    // BookingView(),
     PemesananView(),
     RiwayatView(),
+    ProfileCustomerView(),
   ];
 
   @override
@@ -33,14 +34,18 @@ class NavbarCustomerView extends GetView<NavbarCustomerController> {
               icon: Icon(Icons.design_services),
               label: 'Layanan',
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.calendar_month),
-              label: 'Booking',
-            ),
+            // BottomNavigationBarItem(
+            //   icon: Icon(Icons.calendar_month),
+            //   label: 'Booking',
+            // ),
             BottomNavigationBarItem(icon: Icon(Icons.payments), label: 'Bayar'),
             BottomNavigationBarItem(
               icon: Icon(Icons.history),
               label: 'Riwayat',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.person_2),
+              label: 'Profile',
             ),
           ],
         ),

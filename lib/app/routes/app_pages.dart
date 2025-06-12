@@ -30,6 +30,10 @@ import '../modules/pembayaran/bindings/pembayaran_binding.dart';
 import '../modules/pembayaran/views/pembayaran_view.dart';
 import '../modules/pemesanan/bindings/pemesanan_binding.dart';
 import '../modules/pemesanan/views/pemesanan_view.dart';
+import '../modules/profile_admin/bindings/profile_admin_binding.dart';
+import '../modules/profile_admin/views/profile_admin_view.dart';
+import '../modules/profile_customer/bindings/profile_customer_binding.dart';
+import '../modules/profile_customer/views/profile_customer_view.dart';
 import '../modules/register/bindings/register_binding.dart';
 import '../modules/register/views/register_view.dart';
 import '../modules/riwayat/bindings/riwayat_binding.dart';
@@ -134,6 +138,16 @@ class AppPages {
       name: _Paths.RIWAYAT,
       page: () => const RiwayatView(),
       binding: RiwayatBinding(),
+    ),
+    GetPage(
+      name: _Paths.PROFILE_CUSTOMER,
+      page: () => const ProfileCustomerView(),
+      binding: ProfileCustomerBinding(),
+    ),
+    GetPage(
+      name: _Paths.PROFILE_ADMIN,
+      page: () => const ProfileAdminView(),
+      binding: ProfileAdminBinding(),
     ),
   ];
 }

@@ -66,6 +66,7 @@ class LayananView extends GetView<LayananController> {
                         ElevatedButton(
                           onPressed: () {
                             // navigasi ke halaman booking
+                            Get.toNamed('/booking');
                             Get.snackbar(
                               "Booking",
 
