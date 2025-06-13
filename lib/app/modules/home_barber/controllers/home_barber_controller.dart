@@ -1,23 +1,60 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
+import 'package:lookism_hairstudio_booking/app/data/models/booking_model.dart';
 
 class HomeBarberController extends GetxController {
-  //TODO: Implement HomeBarberController
+  final bookings = <BookingModel>[].obs;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  final count = 0.obs;
+  // TODO: Gantilah ID ini sesuai dengan user login sesungguhnya
+  // Ini hanya untuk filter, tidak akan ditampilkan di UI
+  final String currentBarbermanId = FirebaseAuth.instance.currentUser!.uid;
+  // UID dari barberman login
+
   @override
   void onInit() {
     super.onInit();
+    listenToBookings(); // gunakan stream listener
   }
 
-  @override
-  void onReady() {
-    super.onReady();
+  /// Menggunakan stream agar data otomatis update
+  void listenToBookings() {
+    try {
+      _firestore
+          .collection('bookings')
+          .where('baberman_id', isEqualTo: currentBarbermanId)
+          .orderBy('booking_date')
+          .snapshots()
+          .listen((snapshot) {
+            bookings.value =
+                snapshot.docs
+                    .map((doc) => BookingModel.fromMap(doc.id, doc.data()))
+                    .toList();
+          });
+    } on FirebaseException catch (e) {
+      // Tangani error index belum selesai
+      if (e.code == 'failed-precondition') {
+        Get.snackbar(
+          'Index Belum Siap',
+          'Firestore index sedang dibangun. Tunggu beberapa menit lalu coba lagi.',
+        );
+      } else {
+        Get.snackbar('Error', 'Gagal memuat jadwal: ${e.message}');
+      }
+    }
   }
 
-  @override
-  void onClose() {
-    super.onClose();
-  }
+  /// Tandai jadwal sebagai selesai
+  Future<void> markAsServed(BookingModel booking) async {
+    try {
+      await _firestore.collection('bookings').doc(booking.id).update({
+        'status': 'selesai',
+      });
 
-  void increment() => count.value++;
+      Get.snackbar('Sukses', 'Jadwal ditandai sebagai selesai');
+    } catch (e) {
+      Get.snackbar('Error', 'Gagal memperbarui status: $e');
+    }
+  }
 }

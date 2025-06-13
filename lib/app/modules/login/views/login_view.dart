@@ -48,7 +48,7 @@ class LoginView extends GetView<LoginController> {
                   ),
                   SizedBox(height: 8),
                   Text(
-                    "Masuk ke akun Lookism Hair Studio",
+                    "Masuk ke akun Lookism Hairstudio",
                     style: TextStyle(fontSize: 16, color: Colors.grey[600]),
                   ),
                   SizedBox(height: 40),

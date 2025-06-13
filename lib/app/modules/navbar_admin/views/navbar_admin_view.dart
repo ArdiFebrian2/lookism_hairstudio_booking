@@ -11,13 +11,13 @@ class NavbarAdminView extends StatelessWidget {
 
   List<PersistentBottomNavBarItem> _navBarsItems() {
     return [
-      PersistentBottomNavBarItem(
-        icon: Icon(Icons.dashboard_outlined),
-        title: ("Dashboard"),
-        activeColorPrimary: Colors.deepPurple,
-        activeColorSecondary: Colors.white,
-        inactiveColorPrimary: Colors.grey,
-      ),
+      // PersistentBottomNavBarItem(
+      //   icon: Icon(Icons.dashboard_outlined),
+      //   title: ("Dashboard"),
+      //   activeColorPrimary: Colors.deepPurple,
+      //   activeColorSecondary: Colors.white,
+      //   inactiveColorPrimary: Colors.grey,
+      // ),
       PersistentBottomNavBarItem(
         icon: Icon(Icons.manage_accounts),
         title: ("Manajemen"),

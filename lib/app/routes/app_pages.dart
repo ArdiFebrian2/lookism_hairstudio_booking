@@ -14,6 +14,10 @@ import '../modules/home_barber/bindings/home_barber_binding.dart';
 import '../modules/home_barber/views/home_barber_view.dart';
 import '../modules/home_customer/bindings/home_customer_binding.dart';
 import '../modules/home_customer/views/home_customer_view.dart';
+import '../modules/jadwal_baberman/bindings/jadwal_baberman_binding.dart';
+import '../modules/jadwal_baberman/views/jadwal_baberman_view.dart';
+import '../modules/kelola_baberman/bindings/kelola_baberman_binding.dart';
+import '../modules/kelola_baberman/views/kelola_baberman_view.dart';
 import '../modules/laporan/bindings/laporan_binding.dart';
 import '../modules/laporan/views/laporan_view.dart';
 import '../modules/layanan/bindings/layanan_binding.dart';
@@ -148,6 +152,16 @@ class AppPages {
       name: _Paths.PROFILE_ADMIN,
       page: () => const ProfileAdminView(),
       binding: ProfileAdminBinding(),
+    ),
+    GetPage(
+      name: _Paths.KELOLA_BABERMAN,
+      page: () => const KelolaBabermanView(),
+      binding: KelolaBabermanBinding(),
+    ),
+    GetPage(
+      name: _Paths.JADWAL_BABERMAN,
+      page: () => const JadwalBabermanView(),
+      binding: JadwalBabermanBinding(),
     ),
   ];
 }

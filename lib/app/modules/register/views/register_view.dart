@@ -50,7 +50,7 @@ class RegisterView extends GetView<RegisterController> {
                   ),
                   SizedBox(height: 8),
                   Text(
-                    "Daftar untuk mulai booking dengan Lookism",
+                    "Daftar untuk mulai booking dengan Lookism Hairstudio",
                     style: TextStyle(fontSize: 16, color: Colors.grey[600]),
                   ),
                   SizedBox(height: 40),

@@ -23,6 +23,8 @@ abstract class Routes {
   static const RIWAYAT = _Paths.RIWAYAT;
   static const PROFILE_CUSTOMER = _Paths.PROFILE_CUSTOMER;
   static const PROFILE_ADMIN = _Paths.PROFILE_ADMIN;
+  static const KELOLA_BABERMAN = _Paths.KELOLA_BABERMAN;
+  static const JADWAL_BABERMAN = _Paths.JADWAL_BABERMAN;
 }
 
 abstract class _Paths {
@@ -47,4 +49,6 @@ abstract class _Paths {
   static const RIWAYAT = '/riwayat';
   static const PROFILE_CUSTOMER = '/profile-customer';
   static const PROFILE_ADMIN = '/profile-admin';
+  static const KELOLA_BABERMAN = '/kelola-baberman';
+  static const JADWAL_BABERMAN = '/jadwal-baberman';
 }

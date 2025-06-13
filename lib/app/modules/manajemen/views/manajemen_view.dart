@@ -32,7 +32,7 @@ class ManajemenView extends GetView<ManajemenController> {
             subtitle: "Tambah, ubah, hapus data baberman",
             onTap: () {
               // TODO: Navigasi ke CRUD Baberman
-              Get.toNamed('/baberman');
+              Get.toNamed('/kelola-baberman');
             },
           ),
           const SizedBox(height: 16),
