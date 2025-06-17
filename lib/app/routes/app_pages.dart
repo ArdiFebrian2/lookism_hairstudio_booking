@@ -2,10 +2,10 @@ import 'package:get/get.dart';
 
 import '../modules/admin_notifikasi/bindings/admin_notifikasi_binding.dart';
 import '../modules/admin_notifikasi/views/admin_notifikasi_view.dart';
+import '../modules/admin_validate/bindings/admin_validate_binding.dart';
+import '../modules/admin_validate/views/admin_validate_view.dart';
 import '../modules/booking/bindings/booking_binding.dart';
 import '../modules/booking/views/booking_view.dart';
-import '../modules/dashboard/bindings/dashboard_binding.dart';
-import '../modules/dashboard/views/dashboard_view.dart';
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
 import '../modules/home_admin/bindings/home_admin_binding.dart';
@@ -102,11 +102,6 @@ class AppPages {
       binding: NavbarAdminBinding(),
     ),
     GetPage(
-      name: _Paths.DASHBOARD,
-      page: () => const DashboardView(),
-      binding: DashboardBinding(),
-    ),
-    GetPage(
       name: _Paths.MANAJEMEN,
       page: () => const ManajemenView(),
       binding: ManajemenBinding(),
@@ -190,6 +185,11 @@ class AppPages {
       name: _Paths.PROFILE_BABERMAN,
       page: () => const ProfileBabermanView(),
       binding: ProfileBabermanBinding(),
+    ),
+    GetPage(
+      name: _Paths.ADMIN_VALIDATE,
+      page: () => const AdminValidateView(),
+      binding: AdminValidateBinding(),
     ),
   ];
 }

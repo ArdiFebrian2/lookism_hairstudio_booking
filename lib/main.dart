@@ -4,10 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lookism_hairstudio_booking/app/data/controller/auth_controller.dart';
+import 'package:lookism_hairstudio_booking/app/modules/login/controllers/login_controller.dart';
 
 import 'app/routes/app_pages.dart';
 
 void main() async {
+  Get.lazyPut<LoginController>(() => LoginController());
   Get.put(AuthController());
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();

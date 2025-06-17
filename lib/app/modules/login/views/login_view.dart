@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:lookism_hairstudio_booking/app/modules/login/controllers/login_controller.dart';
 
 class LoginView extends GetView<LoginController> {
+  const LoginView({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -14,7 +16,6 @@ class LoginView extends GetView<LoginController> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  // Logo/Brand Section
                   Container(
                     width: 100,
                     height: 100,
@@ -25,19 +26,17 @@ class LoginView extends GetView<LoginController> {
                         BoxShadow(
                           color: Colors.deepPurple.withOpacity(0.3),
                           blurRadius: 20,
-                          offset: Offset(0, 10),
+                          offset: const Offset(0, 10),
                         ),
                       ],
                     ),
-                    child: Icon(
+                    child: const Icon(
                       Icons.content_cut,
                       size: 50,
                       color: Colors.white,
                     ),
                   ),
-                  SizedBox(height: 32),
-
-                  // Welcome Text
+                  const SizedBox(height: 32),
                   Text(
                     "Selamat Datang",
                     style: TextStyle(
@@ -46,16 +45,14 @@ class LoginView extends GetView<LoginController> {
                       color: Colors.grey[800],
                     ),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Text(
                     "Masuk ke akun Lookism Hairstudio",
                     style: TextStyle(fontSize: 16, color: Colors.grey[600]),
                   ),
-                  SizedBox(height: 40),
-
-                  // Login Form Card
+                  const SizedBox(height: 40),
                   Container(
-                    padding: EdgeInsets.all(24),
+                    padding: const EdgeInsets.all(24),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(16),
@@ -63,55 +60,40 @@ class LoginView extends GetView<LoginController> {
                         BoxShadow(
                           color: Colors.black.withOpacity(0.1),
                           blurRadius: 20,
-                          offset: Offset(0, 5),
+                          offset: const Offset(0, 5),
                         ),
                       ],
                     ),
                     child: Column(
                       children: [
-                        // Email Field
+                        // Email TextField - No Obx needed as it's not reactive
                         TextField(
                           controller: controller.emailC,
                           keyboardType: TextInputType.emailAddress,
                           decoration: InputDecoration(
                             labelText: "Email",
                             hintText: "Masukkan email Anda",
-                            prefixIcon: Icon(
+                            prefixIcon: const Icon(
                               Icons.email_outlined,
                               color: Colors.deepPurple,
                             ),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: BorderSide(color: Colors.grey[300]!),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              borderSide: BorderSide(color: Colors.grey[300]!),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              borderSide: BorderSide(
-                                color: Colors.deepPurple,
-                                width: 2,
-                              ),
                             ),
                             filled: true,
                             fillColor: Colors.grey[50],
                           ),
                         ),
-                        SizedBox(height: 20),
-
-                        // Demo Accounts Info Card
-
-                        // Password Field
-                        Obx(
-                          () => TextField(
+                        const SizedBox(height: 20),
+                        // Password TextField with Obx for visibility toggle
+                        Obx(() {
+                          return TextField(
                             controller: controller.passwordC,
                             obscureText: controller.isHidePassword.value,
                             decoration: InputDecoration(
                               labelText: "Password",
                               hintText: "Masukkan password Anda",
-                              prefixIcon: Icon(
+                              prefixIcon: const Icon(
                                 Icons.lock_outline,
                                 color: Colors.deepPurple,
                               ),
@@ -122,41 +104,20 @@ class LoginView extends GetView<LoginController> {
                                       : Icons.visibility,
                                   color: Colors.grey[600],
                                 ),
-                                onPressed:
-                                    () => controller.isHidePassword.toggle(),
+                                onPressed: controller.togglePasswordVisibility,
                               ),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(
-                                  color: Colors.grey[300]!,
-                                ),
                               ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(
-                                  color: Colors.grey[300]!,
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(
-                                  color: Colors.deepPurple,
-                                  width: 2,
-                                ),
-                              ),
-
                               filled: true,
                               fillColor: Colors.grey[50],
                             ),
-                          ),
-                        ),
-                        SizedBox(height: 20),
-
-                        // SizedBox(height: 24),
-
-                        // Login Button
-                        Obx(
-                          () => SizedBox(
+                          );
+                        }),
+                        const SizedBox(height: 20),
+                        // Login Button with Obx for loading state
+                        Obx(() {
+                          return SizedBox(
                             width: double.infinity,
                             height: 50,
                             child: ElevatedButton(
@@ -175,7 +136,7 @@ class LoginView extends GetView<LoginController> {
                               ),
                               child:
                                   controller.isLoading.value
-                                      ? SizedBox(
+                                      ? const SizedBox(
                                         height: 20,
                                         width: 20,
                                         child: CircularProgressIndicator(
@@ -186,7 +147,7 @@ class LoginView extends GetView<LoginController> {
                                               ),
                                         ),
                                       )
-                                      : Text(
+                                      : const Text(
                                         "Masuk",
                                         style: TextStyle(
                                           fontSize: 16,
@@ -194,12 +155,12 @@ class LoginView extends GetView<LoginController> {
                                         ),
                                       ),
                             ),
-                          ),
-                        ),
+                          );
+                        }),
                       ],
                     ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -209,7 +170,7 @@ class LoginView extends GetView<LoginController> {
                       ),
                       GestureDetector(
                         onTap: () => Get.toNamed('/register'),
-                        child: Text(
+                        child: const Text(
                           "Daftar",
                           style: TextStyle(
                             color: Colors.deepPurple,
@@ -220,7 +181,6 @@ class LoginView extends GetView<LoginController> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 10),
                 ],
               ),
             ),

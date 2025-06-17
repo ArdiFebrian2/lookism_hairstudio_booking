@@ -29,6 +29,7 @@ abstract class Routes {
   static const NAVBAR_BABERMAN = _Paths.NAVBAR_BABERMAN;
   static const PENGHASILAN_BABERMAN = _Paths.PENGHASILAN_BABERMAN;
   static const PROFILE_BABERMAN = _Paths.PROFILE_BABERMAN;
+  static const ADMIN_VALIDATE = _Paths.ADMIN_VALIDATE;
 }
 
 abstract class _Paths {
@@ -59,4 +60,5 @@ abstract class _Paths {
   static const NAVBAR_BABERMAN = '/navbar-baberman';
   static const PENGHASILAN_BABERMAN = '/penghasilan-baberman';
   static const PROFILE_BABERMAN = '/profile-baberman';
+  static const ADMIN_VALIDATE = '/admin-validate';
 }
