@@ -43,6 +43,7 @@ dependencies:
   syncfusion_flutter_charts: ^29.2.10
   pdf: ^3.11.3
   printing: ^5.14.2
+  responsive_navigation_bar: ^5.0.2
 
 dev_dependencies:
   flutter_test:

@@ -25,6 +25,10 @@ abstract class Routes {
   static const PROFILE_ADMIN = _Paths.PROFILE_ADMIN;
   static const KELOLA_BABERMAN = _Paths.KELOLA_BABERMAN;
   static const JADWAL_BABERMAN = _Paths.JADWAL_BABERMAN;
+  static const KELOLA_LAYANAN = _Paths.KELOLA_LAYANAN;
+  static const NAVBAR_BABERMAN = _Paths.NAVBAR_BABERMAN;
+  static const PENGHASILAN_BABERMAN = _Paths.PENGHASILAN_BABERMAN;
+  static const PROFILE_BABERMAN = _Paths.PROFILE_BABERMAN;
 }
 
 abstract class _Paths {
@@ -51,4 +55,8 @@ abstract class _Paths {
   static const PROFILE_ADMIN = '/profile-admin';
   static const KELOLA_BABERMAN = '/kelola-baberman';
   static const JADWAL_BABERMAN = '/jadwal-baberman';
+  static const KELOLA_LAYANAN = '/kelola-layanan';
+  static const NAVBAR_BABERMAN = '/navbar-baberman';
+  static const PENGHASILAN_BABERMAN = '/penghasilan-baberman';
+  static const PROFILE_BABERMAN = '/profile-baberman';
 }

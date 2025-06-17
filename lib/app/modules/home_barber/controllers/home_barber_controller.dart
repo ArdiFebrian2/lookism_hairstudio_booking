@@ -7,23 +7,19 @@ class HomeBarberController extends GetxController {
   final bookings = <BookingModel>[].obs;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  // TODO: Gantilah ID ini sesuai dengan user login sesungguhnya
-  // Ini hanya untuk filter, tidak akan ditampilkan di UI
   final String currentBarbermanId = FirebaseAuth.instance.currentUser!.uid;
-  // UID dari barberman login
 
   @override
   void onInit() {
     super.onInit();
-    listenToBookings(); // gunakan stream listener
+    listenToBookings();
   }
 
-  /// Menggunakan stream agar data otomatis update
   void listenToBookings() {
     try {
       _firestore
           .collection('bookings')
-          .where('baberman_id', isEqualTo: currentBarbermanId)
+          .where('barberman_id', isEqualTo: currentBarbermanId)
           .orderBy('booking_date')
           .snapshots()
           .listen((snapshot) {
@@ -45,7 +41,6 @@ class HomeBarberController extends GetxController {
     }
   }
 
-  /// Tandai jadwal sebagai selesai
   Future<void> markAsServed(BookingModel booking) async {
     try {
       await _firestore.collection('bookings').doc(booking.id).update({

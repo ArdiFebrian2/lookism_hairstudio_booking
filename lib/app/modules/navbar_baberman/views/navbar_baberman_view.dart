@@ -1,22 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lookism_hairstudio_booking/app/modules/home_barber/views/home_barber_view.dart';
+import 'package:lookism_hairstudio_booking/app/modules/penghasilan_baberman/views/penghasilan_baberman_view.dart';
+import 'package:lookism_hairstudio_booking/app/modules/profile_baberman/views/profile_baberman_view.dart';
+import '../controllers/navbar_baberman_controller.dart';
 
-// Import halaman yang tersedia
-import 'package:lookism_hairstudio_booking/app/modules/layanan/views/layanan_view.dart';
-import 'package:lookism_hairstudio_booking/app/modules/riwayat/views/riwayat_view.dart';
-import 'package:lookism_hairstudio_booking/app/modules/profile_customer/views/profile_customer_view.dart';
-
-import '../controllers/navbar_customer_controller.dart';
-
-class NavbarCustomerView extends GetView<NavbarCustomerController> {
-  const NavbarCustomerView({super.key});
+class NavbarBabermanView extends GetView<NavbarBabermanController> {
+  const NavbarBabermanView({super.key});
 
   @override
   Widget build(BuildContext context) {
     final List<Widget> pages = const [
-      LayananView(), // index 0
-      RiwayatView(), // index 1
-      ProfileCustomerView(), // index 2
+      HomeBarberView(), // index 0
+      PenghasilanBabermanView(), // index 1
+      ProfileBabermanView(), // index 2
     ];
 
     return Obx(
@@ -25,10 +22,10 @@ class NavbarCustomerView extends GetView<NavbarCustomerController> {
         bottomNavigationBar: Container(
           height: 72,
           decoration: BoxDecoration(
-            color: Colors.deepPurple, // Ubah sesuai tema
+            color: Colors.deepPurple,
             borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(10.0),
-              topRight: Radius.circular(10.0),
+              topLeft: Radius.circular(16.0),
+              topRight: Radius.circular(16.0),
             ),
             boxShadow: [
               BoxShadow(
@@ -41,7 +38,7 @@ class NavbarCustomerView extends GetView<NavbarCustomerController> {
           child: BottomNavigationBar(
             currentIndex: controller.currentIndex.value,
             onTap: controller.changeTab,
-            selectedItemColor: Colors.grey,
+            selectedItemColor: Colors.grey.shade200,
             unselectedItemColor: Colors.white,
             type: BottomNavigationBarType.fixed,
             backgroundColor: Colors.transparent,
@@ -57,7 +54,7 @@ class NavbarCustomerView extends GetView<NavbarCustomerController> {
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.person_2),
-                label: 'Profile',
+                label: 'Profil',
               ),
             ],
           ),

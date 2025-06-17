@@ -46,7 +46,7 @@ class LoginController extends GetxController {
       if (role == 'customer') {
         Get.offAllNamed('/navbar-customer');
       } else if (role == 'baberman') {
-        Get.offAllNamed('/home-barber');
+        Get.offAllNamed('/navbar-baberman');
       } else if (role == 'admin') {
         Get.offAllNamed('/navbar-admin');
       } else {

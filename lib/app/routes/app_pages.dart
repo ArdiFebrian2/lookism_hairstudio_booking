@@ -18,6 +18,8 @@ import '../modules/jadwal_baberman/bindings/jadwal_baberman_binding.dart';
 import '../modules/jadwal_baberman/views/jadwal_baberman_view.dart';
 import '../modules/kelola_baberman/bindings/kelola_baberman_binding.dart';
 import '../modules/kelola_baberman/views/kelola_baberman_view.dart';
+import '../modules/kelola_layanan/bindings/kelola_layanan_binding.dart';
+import '../modules/kelola_layanan/views/kelola_layanan_view.dart';
 import '../modules/laporan/bindings/laporan_binding.dart';
 import '../modules/laporan/views/laporan_view.dart';
 import '../modules/layanan/bindings/layanan_binding.dart';
@@ -28,14 +30,20 @@ import '../modules/manajemen/bindings/manajemen_binding.dart';
 import '../modules/manajemen/views/manajemen_view.dart';
 import '../modules/navbar_admin/bindings/navbar_admin_binding.dart';
 import '../modules/navbar_admin/views/navbar_admin_view.dart';
+import '../modules/navbar_baberman/bindings/navbar_baberman_binding.dart';
+import '../modules/navbar_baberman/views/navbar_baberman_view.dart';
 import '../modules/navbar_customer/bindings/navbar_customer_binding.dart';
 import '../modules/navbar_customer/views/navbar_customer_view.dart';
 import '../modules/pembayaran/bindings/pembayaran_binding.dart';
 import '../modules/pembayaran/views/pembayaran_view.dart';
 import '../modules/pemesanan/bindings/pemesanan_binding.dart';
 import '../modules/pemesanan/views/pemesanan_view.dart';
+import '../modules/penghasilan_baberman/bindings/penghasilan_baberman_binding.dart';
+import '../modules/penghasilan_baberman/views/penghasilan_baberman_view.dart';
 import '../modules/profile_admin/bindings/profile_admin_binding.dart';
 import '../modules/profile_admin/views/profile_admin_view.dart';
+import '../modules/profile_baberman/bindings/profile_baberman_binding.dart';
+import '../modules/profile_baberman/views/profile_baberman_view.dart';
 import '../modules/profile_customer/bindings/profile_customer_binding.dart';
 import '../modules/profile_customer/views/profile_customer_view.dart';
 import '../modules/register/bindings/register_binding.dart';
@@ -162,6 +170,26 @@ class AppPages {
       name: _Paths.JADWAL_BABERMAN,
       page: () => const JadwalBabermanView(),
       binding: JadwalBabermanBinding(),
+    ),
+    GetPage(
+      name: _Paths.KELOLA_LAYANAN,
+      page: () => const KelolaLayananView(),
+      binding: KelolaLayananBinding(),
+    ),
+    GetPage(
+      name: _Paths.NAVBAR_BABERMAN,
+      page: () => const NavbarBabermanView(),
+      binding: NavbarBabermanBinding(),
+    ),
+    GetPage(
+      name: _Paths.PENGHASILAN_BABERMAN,
+      page: () => const PenghasilanBabermanView(),
+      binding: PenghasilanBabermanBinding(),
+    ),
+    GetPage(
+      name: _Paths.PROFILE_BABERMAN,
+      page: () => const ProfileBabermanView(),
+      binding: ProfileBabermanBinding(),
     ),
   ];
 }
