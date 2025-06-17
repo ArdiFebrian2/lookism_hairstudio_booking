@@ -1,12 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 class JadwalBabermanController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  var barbermen = <Map<String, String>>[].obs;
+  var barbermen = <Map<String, dynamic>>[].obs;
+  var services = <Map<String, String>>[].obs;
+
   var selectedBarbermanId = ''.obs;
+  var selectedService = ''.obs;
 
   final dateC = TextEditingController();
   final timeC = TextEditingController();
@@ -20,9 +25,10 @@ class JadwalBabermanController extends GetxController {
   void onInit() {
     super.onInit();
     fetchBarbermen();
+    fetchServices();
   }
 
-  /// Ambil daftar barberman dari Firestore
+  // Ambil data barberman
   void fetchBarbermen() async {
     try {
       isLoading.value = true;
@@ -35,23 +41,35 @@ class JadwalBabermanController extends GetxController {
       barbermen.value =
           snapshot.docs.map((doc) {
             final data = doc.data();
-            final nama = data['nama'];
             return {
               'id': doc.id,
-              'name':
-                  (nama is String && nama.trim().isNotEmpty)
-                      ? nama
-                      : 'Tanpa Nama',
+              'name': data['nama']?.toString() ?? 'Tanpa Nama',
             };
           }).toList();
     } catch (e) {
-      Get.snackbar('Error', 'Gagal memuat data barberman: $e');
+      Get.snackbar('Error', 'Gagal memuat barberman: $e');
     } finally {
       isLoading.value = false;
     }
   }
 
-  /// Pilih tanggal dari date picker
+  // Ambil data layanan dari koleksi 'services'
+  void fetchServices() async {
+    try {
+      final snapshot = await _firestore.collection('services').get();
+      services.value =
+          snapshot.docs.map((doc) {
+            final data = doc.data();
+            return {
+              'id': doc.id,
+              'name': data['name']?.toString() ?? 'Layanan Tanpa Nama',
+            };
+          }).toList();
+    } catch (e) {
+      Get.snackbar('Error', 'Gagal memuat layanan: $e');
+    }
+  }
+
   void pickDate() async {
     final picked = await showDatePicker(
       context: Get.context!,
@@ -61,11 +79,10 @@ class JadwalBabermanController extends GetxController {
     );
     if (picked != null) {
       selectedDate = picked;
-      dateC.text = picked.toIso8601String().split('T').first;
+      dateC.text = DateFormat('yyyy-MM-dd').format(picked);
     }
   }
 
-  /// Pilih jam dari time picker
   void pickTime() async {
     final picked = await showTimePicker(
       context: Get.context!,
@@ -77,11 +94,15 @@ class JadwalBabermanController extends GetxController {
     }
   }
 
-  /// Simpan jadwal baru ke Firestore
+  String getDayName(DateTime date) {
+    return DateFormat('EEEE', 'id_ID').format(date); // contoh: Senin
+  }
+
   void saveJadwal() async {
     if (selectedBarbermanId.value.isEmpty ||
         selectedDate == null ||
-        selectedTime == null) {
+        selectedTime == null ||
+        selectedService.value.isEmpty) {
       Get.snackbar('Validasi', 'Semua field harus diisi');
       return;
     }
@@ -92,6 +113,13 @@ class JadwalBabermanController extends GetxController {
       final bookingDate = dateC.text.trim();
       final bookingTime =
           '${selectedTime!.hour.toString().padLeft(2, '0')}:${selectedTime!.minute.toString().padLeft(2, '0')}';
+      final day = getDayName(selectedDate!);
+
+      print("📌 Proses simpan booking:");
+      print("Barberman ID: ${selectedBarbermanId.value}");
+      print("Tanggal: $bookingDate");
+      print("Jam: $bookingTime");
+      print("Layanan: ${selectedService.value}");
 
       final snapshot =
           await _firestore
@@ -110,24 +138,27 @@ class JadwalBabermanController extends GetxController {
       }
 
       await _firestore.collection('bookings').add({
-        'user_id': '', // Admin membuat
+        'user_id': FirebaseAuth.instance.currentUser?.uid ?? 'unknown',
         'barberman_id': selectedBarbermanId.value,
         'booking_date': bookingDate,
         'booking_time': bookingTime,
-        'service_id': '', // Optional
+        'service_name': selectedService.value,
+        'day': day,
         'status': 'menunggu',
         'created_at': FieldValue.serverTimestamp(),
       });
 
       Get.snackbar('Sukses', 'Jadwal berhasil ditambahkan');
 
-      // Reset field
+      // Reset input
       selectedBarbermanId.value = '';
+      selectedService.value = '';
       dateC.clear();
       timeC.clear();
       selectedDate = null;
       selectedTime = null;
     } catch (e) {
+      print("❌ Error saat menyimpan jadwal: $e");
       Get.snackbar('Error', 'Gagal menyimpan jadwal: $e');
     } finally {
       isLoading.value = false;

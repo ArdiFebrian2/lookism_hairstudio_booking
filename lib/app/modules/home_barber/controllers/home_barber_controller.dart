@@ -6,7 +6,6 @@ import 'package:lookism_hairstudio_booking/app/data/models/booking_model.dart';
 class HomeBarberController extends GetxController {
   final bookings = <BookingModel>[].obs;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
   final String currentBarbermanId = FirebaseAuth.instance.currentUser!.uid;
 
   @override
@@ -29,7 +28,6 @@ class HomeBarberController extends GetxController {
                     .toList();
           });
     } on FirebaseException catch (e) {
-      // Tangani error index belum selesai
       if (e.code == 'failed-precondition') {
         Get.snackbar(
           'Index Belum Siap',

@@ -21,6 +21,7 @@ class JadwalBabermanView extends GetView<JadwalBabermanController> {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
+              // 🔽 Dropdown barberman
               DropdownButtonFormField<String>(
                 value:
                     controller.selectedBarbermanId.value.isEmpty
@@ -42,6 +43,31 @@ class JadwalBabermanView extends GetView<JadwalBabermanController> {
                 ),
               ),
               const SizedBox(height: 16),
+
+              // 🔽 Dropdown layanan
+              DropdownButtonFormField<String>(
+                value:
+                    controller.selectedService.value.isEmpty
+                        ? null
+                        : controller.selectedService.value,
+                items:
+                    controller.services.map((service) {
+                      return DropdownMenuItem<String>(
+                        value: service['name'],
+                        child: Text(service['name'] ?? ''),
+                      );
+                    }).toList(),
+                onChanged: (value) {
+                  controller.selectedService.value = value ?? '';
+                },
+                decoration: const InputDecoration(
+                  labelText: "Pilih Layanan",
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // 🔽 Tanggal
               TextFormField(
                 readOnly: true,
                 controller: controller.dateC,
@@ -53,6 +79,8 @@ class JadwalBabermanView extends GetView<JadwalBabermanController> {
                 onTap: controller.pickDate,
               ),
               const SizedBox(height: 16),
+
+              // 🔽 Jam
               TextFormField(
                 readOnly: true,
                 controller: controller.timeC,
@@ -64,6 +92,8 @@ class JadwalBabermanView extends GetView<JadwalBabermanController> {
                 onTap: controller.pickTime,
               ),
               const SizedBox(height: 24),
+
+              // 🔽 Tombol simpan
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton.icon(
