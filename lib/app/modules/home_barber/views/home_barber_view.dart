@@ -16,12 +16,12 @@ class HomeBarberView extends GetView<HomeBarberController> {
           style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
         ),
         centerTitle: true,
-        backgroundColor: Colors.indigo[600],
+        backgroundColor: Colors.deepPurple,
         elevation: 0,
         flexibleSpace: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [Colors.indigo[600]!, Colors.indigo[800]!],
+              colors: [Colors.deepPurple, Colors.deepPurple],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -83,7 +83,7 @@ class HomeBarberView extends GetView<HomeBarberController> {
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [Colors.blue[400]!, Colors.blue[600]!],
+          colors: [Colors.deepPurple, Colors.deepPurple],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),

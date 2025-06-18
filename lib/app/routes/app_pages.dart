@@ -22,8 +22,6 @@ import '../modules/kelola_layanan/bindings/kelola_layanan_binding.dart';
 import '../modules/kelola_layanan/views/kelola_layanan_view.dart';
 import '../modules/laporan/bindings/laporan_binding.dart';
 import '../modules/laporan/views/laporan_view.dart';
-import '../modules/layanan/bindings/layanan_binding.dart';
-import '../modules/layanan/views/layanan_view.dart';
 import '../modules/login/bindings/login_binding.dart';
 import '../modules/login/views/login_view.dart';
 import '../modules/manajemen/bindings/manajemen_binding.dart';
@@ -46,10 +44,16 @@ import '../modules/profile_baberman/bindings/profile_baberman_binding.dart';
 import '../modules/profile_baberman/views/profile_baberman_view.dart';
 import '../modules/profile_customer/bindings/profile_customer_binding.dart';
 import '../modules/profile_customer/views/profile_customer_view.dart';
+import '../modules/rating_customer/bindings/rating_customer_binding.dart';
+import '../modules/rating_customer/views/rating_customer_view.dart';
 import '../modules/register/bindings/register_binding.dart';
 import '../modules/register/views/register_view.dart';
+import '../modules/review_customer/bindings/review_customer_binding.dart';
+import '../modules/review_customer/views/review_customer_view.dart';
 import '../modules/riwayat/bindings/riwayat_binding.dart';
 import '../modules/riwayat/views/riwayat_view.dart';
+import '../modules/service/bindings/service_binding.dart';
+import '../modules/service/views/service_view.dart';
 import '../modules/splashscreen/bindings/splashscreen_binding.dart';
 import '../modules/splashscreen/views/splashscreen_view.dart';
 
@@ -127,11 +131,6 @@ class AppPages {
       binding: NavbarCustomerBinding(),
     ),
     GetPage(
-      name: _Paths.LAYANAN,
-      page: () => const LayananView(),
-      binding: LayananBinding(),
-    ),
-    GetPage(
       name: _Paths.BOOKING,
       page: () => const BookingView(),
       binding: BookingBinding(),
@@ -190,6 +189,21 @@ class AppPages {
       name: _Paths.ADMIN_VALIDATE,
       page: () => const AdminValidateView(),
       binding: AdminValidateBinding(),
+    ),
+    GetPage(
+      name: _Paths.SERVICE,
+      page: () => ServiceView(),
+      binding: ServiceBinding(),
+    ),
+    GetPage(
+      name: _Paths.RATING_CUSTOMER,
+      page: () => const RatingCustomerView(),
+      binding: RatingCustomerBinding(),
+    ),
+    GetPage(
+      name: _Paths.REVIEW_CUSTOMER,
+      page: () => const ReviewCustomerView(),
+      binding: ReviewCustomerBinding(),
     ),
   ];
 }

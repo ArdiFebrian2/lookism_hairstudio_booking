@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
-// Import halaman yang tersedia
-import 'package:lookism_hairstudio_booking/app/modules/layanan/views/layanan_view.dart';
+import 'package:lookism_hairstudio_booking/app/modules/home_customer/views/home_customer_view.dart';
+import 'package:lookism_hairstudio_booking/app/modules/rating_customer/views/rating_customer_view.dart';
 import 'package:lookism_hairstudio_booking/app/modules/riwayat/views/riwayat_view.dart';
 import 'package:lookism_hairstudio_booking/app/modules/profile_customer/views/profile_customer_view.dart';
 
@@ -13,10 +12,12 @@ class NavbarCustomerView extends GetView<NavbarCustomerController> {
 
   @override
   Widget build(BuildContext context) {
-    final List<Widget> pages = const [
-      LayananView(), // index 0
-      RiwayatView(), // index 1
-      ProfileCustomerView(), // index 2
+    final List<Widget> pages = [
+      HomeCustomerView(), // index 0
+      const RiwayatView(),
+      RatingCustomerView(), // index 1
+      const ProfileCustomerView(),
+      // index 2
     ];
 
     return Obx(
@@ -55,6 +56,7 @@ class NavbarCustomerView extends GetView<NavbarCustomerController> {
                 icon: Icon(Icons.history),
                 label: 'Riwayat',
               ),
+              BottomNavigationBarItem(icon: Icon(Icons.star), label: 'Rating'),
               BottomNavigationBarItem(
                 icon: Icon(Icons.person_2),
                 label: 'Profile',

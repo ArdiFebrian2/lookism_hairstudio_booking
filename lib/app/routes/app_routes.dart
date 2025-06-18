@@ -30,6 +30,9 @@ abstract class Routes {
   static const PENGHASILAN_BABERMAN = _Paths.PENGHASILAN_BABERMAN;
   static const PROFILE_BABERMAN = _Paths.PROFILE_BABERMAN;
   static const ADMIN_VALIDATE = _Paths.ADMIN_VALIDATE;
+  static const SERVICE = _Paths.SERVICE;
+  static const RATING_CUSTOMER = _Paths.RATING_CUSTOMER;
+  static const REVIEW_CUSTOMER = _Paths.REVIEW_CUSTOMER;
 }
 
 abstract class _Paths {
@@ -61,4 +64,7 @@ abstract class _Paths {
   static const PENGHASILAN_BABERMAN = '/penghasilan-baberman';
   static const PROFILE_BABERMAN = '/profile-baberman';
   static const ADMIN_VALIDATE = '/admin-validate';
+  static const SERVICE = '/service';
+  static const RATING_CUSTOMER = '/rating-customer';
+  static const REVIEW_CUSTOMER = '/review-customer';
 }

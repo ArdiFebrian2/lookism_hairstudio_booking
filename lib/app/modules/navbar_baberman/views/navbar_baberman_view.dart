@@ -46,7 +46,7 @@ class NavbarBabermanView extends GetView<NavbarBabermanController> {
             items: const [
               BottomNavigationBarItem(
                 icon: Icon(Icons.design_services),
-                label: 'Layanan',
+                label: 'Booking',
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.history),
