@@ -1,16 +1,18 @@
-# lookism_hairstudio_booking
+###💈 Lookism Hairstudio Booking App
+Aplikasi mobile untuk melakukan booking layanan potong rambut di Lookism Hairstudio secara mudah, cepat, dan modern, berbasis Flutter dan Firebase.
 
-A new Flutter project.
+🧩 Fitur Utama
+##👤 Customer (Pelanggan)
+#🔐 Register & Login
+- Autentikasi menggunakan email dan password.
+#📋 Lihat Daftar Layanan
+- Menampilkan semua layanan aktif (potong rambut, cukur jenggot, dsb).
+#📅 Booking Layanan
+- Pilih layanan, tanggal, jam, dan barberman.
+#💬 Berikan Review
+- Setelah layanan selesai, customer bisa memberikan komentar & rating.
+#📜 Lihat Riwayat Booking
+- Daftar pemesanan yang sudah dilakukan.
+#🔓 Logout
 
-## Getting Started
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
