@@ -220,16 +220,9 @@ class RegisterView extends GetView<RegisterController> {
                       ),
                       GestureDetector(
                         onTap: () {
-                          // Pastikan controller sudah tersedia
-                          if (Get.isRegistered<LoginController>()) {
-                            Get.delete<
-                              LoginController
-                            >(); // hapus instance lama
-                          }
-                          Get.put(
-                            LoginController(),
-                          ); // inisialisasi ulang controller
-                          Get.offAll(() => const LoginView());
+                          Get.offAllNamed(
+                            '/login',
+                          ); // pastikan LoginBinding sudah diset
                         },
                         child: const Text(
                           "Masuk",

@@ -4,6 +4,6 @@ import 'package:lookism_hairstudio_booking/app/modules/login/controllers/login_c
 class LoginBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<LoginController>(() => LoginController());
+    Get.put(LoginController());
   }
 }

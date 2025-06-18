@@ -3,8 +3,9 @@ import 'package:get/get.dart';
 import 'package:lookism_hairstudio_booking/app/modules/login/controllers/login_controller.dart';
 
 class LoginView extends GetView<LoginController> {
-  const LoginView({Key? key}) : super(key: key);
-
+  LoginView({Key? key}) : super(key: key);
+  @override
+  final LoginController controller = Get.put(LoginController());
   @override
   Widget build(BuildContext context) {
     return Scaffold(
