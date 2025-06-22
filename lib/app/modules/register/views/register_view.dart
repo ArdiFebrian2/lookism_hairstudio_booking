@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lookism_hairstudio_booking/app/data/controller/auth_controller.dart';
-import 'package:lookism_hairstudio_booking/app/modules/login/controllers/login_controller.dart';
-import 'package:lookism_hairstudio_booking/app/modules/login/views/login_view.dart';
 import 'package:lookism_hairstudio_booking/app/modules/register/controllers/register_controller.dart';
 
 class RegisterView extends GetView<RegisterController> {
