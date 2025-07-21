@@ -24,8 +24,6 @@ import '../modules/laporan/bindings/laporan_binding.dart';
 import '../modules/laporan/views/laporan_view.dart';
 import '../modules/login/bindings/login_binding.dart';
 import '../modules/login/views/login_view.dart';
-import '../modules/manajemen/bindings/manajemen_binding.dart';
-import '../modules/manajemen/views/manajemen_view.dart';
 import '../modules/navbar_admin/bindings/navbar_admin_binding.dart';
 import '../modules/navbar_admin/views/navbar_admin_view.dart';
 import '../modules/navbar_baberman/bindings/navbar_baberman_binding.dart';
@@ -104,11 +102,6 @@ class AppPages {
       name: _Paths.NAVBAR_ADMIN,
       page: () => NavbarAdminView(),
       binding: NavbarAdminBinding(),
-    ),
-    GetPage(
-      name: _Paths.MANAJEMEN,
-      page: () => const ManajemenView(),
-      binding: ManajemenBinding(),
     ),
     GetPage(
       name: _Paths.PEMESANAN,

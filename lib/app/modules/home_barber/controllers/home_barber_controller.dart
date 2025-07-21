@@ -16,6 +16,7 @@ class HomeBarberController extends GetxController {
     fetchBookings();
   }
 
+  /// Mengambil semua data booking berdasarkan barbermanId dan hanya jika user adalah customer
   void fetchBookings() async {
     isLoading.value = true;
 
@@ -27,14 +28,15 @@ class HomeBarberController extends GetxController {
               .orderBy('datetime')
               .get();
 
+      debugPrint('📦 Total Bookings: ${snapshot.docs.length}');
       final List<Map<String, dynamic>> bookingList = [];
 
       for (final doc in snapshot.docs) {
         final data = doc.data();
         data['id'] = doc.id;
 
-        // Ambil nama customer jika userId ada
         final String? userId = data['userId'];
+
         if (userId != null && userId.isNotEmpty) {
           try {
             final userDoc =
@@ -45,34 +47,31 @@ class HomeBarberController extends GetxController {
 
             if (userDoc.exists) {
               final userData = userDoc.data();
-              if (userData != null && userData['role'] == 'customer') {
-                data['customerName'] = userData['name'] ?? 'Tidak diketahui';
-              } else {
-                data['customerName'] = 'Bukan customer';
+              final bool isCustomer = (userData?['role'] == 'customer');
+
+              if (isCustomer) {
+                data['customerName'] = userData?['name'] ?? 'Tidak diketahui';
+                data['customerEmail'] = userData?['email'] ?? '-';
+                data['customerPhone'] = userData?['phone'] ?? '-';
+                bookingList.add(data);
               }
-            } else {
-              data['customerName'] = 'User tidak ditemukan';
             }
           } catch (e) {
-            debugPrint('Gagal ambil user $userId: $e');
-            data['customerName'] = 'Error ambil nama';
+            debugPrint('❌ Gagal ambil data user ($userId): $e');
           }
-        } else {
-          data['customerName'] = 'Tidak diketahui';
         }
-
-        bookingList.add(data);
       }
 
       bookings.value = bookingList;
     } catch (e) {
-      debugPrint('Error saat fetchBookings: $e');
+      debugPrint('❌ Error saat fetchBookings: $e');
       Get.snackbar('Error', 'Gagal mengambil data booking');
     } finally {
       isLoading.value = false;
     }
   }
 
+  /// Update status booking (accepted / rejected / selesai)
   Future<void> updateBookingStatus(String bookingId, String status) async {
     try {
       await FirebaseFirestore.instance
@@ -82,18 +81,24 @@ class HomeBarberController extends GetxController {
 
       Get.snackbar(
         'Berhasil',
-        status == 'accepted' ? 'Booking diterima' : 'Booking ditolak',
+        status == 'accepted'
+            ? 'Booking diterima'
+            : status == 'selesai'
+            ? 'Booking selesai'
+            : 'Status booking diperbarui',
         snackPosition: SnackPosition.TOP,
         backgroundColor:
             status == 'accepted'
                 ? Get.theme.primaryColor
+                : status == 'selesai'
+                ? Colors.green
                 : Get.theme.colorScheme.error,
         colorText: Colors.white,
       );
 
-      fetchBookings(); // Refresh setelah update
+      fetchBookings(); // Refresh data
     } catch (e) {
-      debugPrint('Error saat updateBookingStatus: $e');
+      debugPrint('❌ Gagal update status booking: $e');
       Get.snackbar('Error', 'Gagal memperbarui status booking');
     }
   }

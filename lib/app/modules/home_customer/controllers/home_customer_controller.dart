@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lookism_hairstudio_booking/app/data/models/service_model.dart';
@@ -14,9 +15,12 @@ class HomeCustomerController extends GetxController {
   final selectedTime = Rxn<TimeOfDay>();
   final isSubmitting = RxBool(false);
 
+  late final String userId;
+
   @override
   void onInit() {
     super.onInit();
+    userId = FirebaseAuth.instance.currentUser?.uid ?? '';
     if (Get.isRegistered<ServiceController>()) {
       serviceController = Get.find<ServiceController>();
     } else {
@@ -33,7 +37,7 @@ class HomeCustomerController extends GetxController {
     final snapshot =
         await FirebaseFirestore.instance
             .collection('users')
-            .where('role', isEqualTo: 'baberman')
+            .where('role', isEqualTo: 'baberman') // typo? maybe 'barberman'
             .get();
     return snapshot.docs;
   }
@@ -89,7 +93,6 @@ class HomeCustomerController extends GetxController {
     );
 
     if (picked != null) {
-      // Validasi waktu booking hanya antara 09:00 - 21:00
       final pickedMinutes = picked.hour * 60 + picked.minute;
       const minMinutes = 9 * 60; // 09:00
       const maxMinutes = 21 * 60; // 21:00
@@ -139,6 +142,7 @@ class HomeCustomerController extends GetxController {
       );
 
       await FirebaseFirestore.instance.collection('bookings').add({
+        'userId': userId, // ← penting untuk menghubungkan dengan user customer
         'serviceId': service.id,
         'serviceName': service.name,
         'barbermanId': selectedBarberman.value,

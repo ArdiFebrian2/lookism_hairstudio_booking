@@ -44,6 +44,8 @@ class BookingCard extends StatelessWidget {
               children: [
                 BookingHeader(serviceName: booking['serviceName']),
                 const SizedBox(height: 8),
+
+                // Informasi Customer
                 Text(
                   'Customer: ${booking['customerName'] ?? 'Tidak diketahui'}',
                   style: const TextStyle(
@@ -51,10 +53,21 @@ class BookingCard extends StatelessWidget {
                     fontWeight: FontWeight.w500,
                   ),
                 ),
+                const SizedBox(height: 4),
+                Text(
+                  'Email: ${booking['customerEmail'] ?? '-'}',
+                  style: const TextStyle(fontSize: 13),
+                ),
+                Text(
+                  'Telepon: ${booking['customerPhone'] ?? '-'}',
+                  style: const TextStyle(fontSize: 13),
+                ),
+
                 const SizedBox(height: 12),
                 BookingInfo(dateTime: dateTime),
                 const SizedBox(height: 12),
                 BookingStatus(status: status),
+
                 if (status == 'pending') ...[
                   const SizedBox(height: 16),
                   BookingActionButtons(onAccept: onAccept, onReject: onReject),

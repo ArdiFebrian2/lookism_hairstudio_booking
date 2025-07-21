@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lookism_hairstudio_booking/app/modules/home_admin/views/home_admin_view.dart';
 import 'package:lookism_hairstudio_booking/app/modules/laporan/views/laporan_view.dart';
-import 'package:lookism_hairstudio_booking/app/modules/manajemen/views/manajemen_view.dart';
 import 'package:lookism_hairstudio_booking/app/modules/profile_admin/views/profile_admin_view.dart';
 import 'package:lookism_hairstudio_booking/app/modules/review_customer/views/review_customer_view.dart';
 
@@ -13,7 +13,7 @@ class NavbarAdminView extends GetView<NavbarAdminController> {
   @override
   Widget build(BuildContext context) {
     final List<Widget> pages = const [
-      ManajemenView(),
+      HomeAdminView(),
       ReviewCustomerView(),
       LaporanView(),
       ProfileAdminView(),
@@ -47,10 +47,7 @@ class NavbarAdminView extends GetView<NavbarAdminController> {
             elevation: 0,
             type: BottomNavigationBarType.fixed,
             items: const [
-              BottomNavigationBarItem(
-                icon: Icon(Icons.manage_accounts),
-                label: 'Manajemen',
-              ),
+              BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Home'),
               BottomNavigationBarItem(
                 icon: Icon(Icons.receipt_long),
                 label: 'Review',

@@ -1,65 +1,32 @@
+// TODO Implement this library.
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../controllers/manajemen_controller.dart';
-
-class ManajemenView extends GetView<ManajemenController> {
-  const ManajemenView({super.key});
+class AdminMenuGrid extends StatelessWidget {
+  const AdminMenuGrid({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey[50],
-      appBar: AppBar(
-        title: const Text(
-          'Manajemen Data',
-          style: TextStyle(fontWeight: FontWeight.w700, fontSize: 22),
-        ),
-        centerTitle: true,
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.deepPurple[700],
-        elevation: 0,
-        shadowColor: Colors.transparent,
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1),
-          child: Container(
-            height: 1,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  Colors.deepPurple.withOpacity(0.1),
-                  Colors.deepPurple.withOpacity(0.3),
-                  Colors.deepPurple.withOpacity(0.1),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            // _buildHeader(),
-            _buildMenuSection(),
-            const SizedBox(height: 32),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildMenuSection() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          const Text(
+            'Menu Utama',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF1E293B),
+            ),
+          ),
           const SizedBox(height: 16),
           _buildMenuTile(
             icon: Icons.design_services_rounded,
             title: "Kelola Layanan",
-            subtitle: "Tambah, ubah, hapus data layanan",
+            subtitle: "Tambah, ubah, hapus data layanan barbershop",
             gradient: [Colors.blue[400]!, Colors.blue[600]!],
+            iconBg: Colors.blue[50]!,
             onTap: () {
               Get.toNamed('/service');
             },
@@ -68,20 +35,11 @@ class ManajemenView extends GetView<ManajemenController> {
           _buildMenuTile(
             icon: Icons.person_rounded,
             title: "Kelola Baberman",
-            subtitle: "Tambah, ubah, hapus data baberman",
+            subtitle: "Tambah, ubah, hapus data baberman dan jadwal",
             gradient: [Colors.green[400]!, Colors.green[600]!],
+            iconBg: Colors.green[50]!,
             onTap: () {
               Get.toNamed('/kelola-baberman');
-            },
-          ),
-          const SizedBox(height: 16),
-          _buildMenuTile(
-            icon: Icons.schedule_rounded,
-            title: "Kelola Jadwal Baberman",
-            subtitle: "Kelola jadwal & validasi bentrok",
-            gradient: [Colors.orange[400]!, Colors.orange[600]!],
-            onTap: () {
-              Get.toNamed('/jadwal-baberman');
             },
           ),
         ],
@@ -94,6 +52,7 @@ class ManajemenView extends GetView<ManajemenController> {
     required String title,
     required String subtitle,
     required List<Color> gradient,
+    required Color iconBg,
     required VoidCallback onTap,
   }) {
     return Hero(
@@ -137,7 +96,7 @@ class ManajemenView extends GetView<ManajemenController> {
                       ),
                     ],
                   ),
-                  child: Icon(icon, color: Colors.white, size: 30),
+                  child: Icon(icon, color: Colors.white, size: 28),
                 ),
                 const SizedBox(width: 20),
                 Expanded(
@@ -149,7 +108,7 @@ class ManajemenView extends GetView<ManajemenController> {
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w700,
-                          color: Colors.black87,
+                          color: Color(0xFF1E293B),
                         ),
                       ),
                       const SizedBox(height: 6),
@@ -165,15 +124,15 @@ class ManajemenView extends GetView<ManajemenController> {
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.grey[100],
+                    color: iconBg,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(
                     Icons.arrow_forward_ios_rounded,
-                    size: 18,
-                    color: Colors.grey[600],
+                    size: 16,
+                    color: gradient[1],
                   ),
                 ),
               ],
