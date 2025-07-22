@@ -2,46 +2,49 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class BookingModel {
   final String id;
-  final String status;
+  final String userId;
   final String serviceName;
-  final DateTime datetime;
-  final DateTime createdAt;
+  final String bookingTime;
+  final String day;
+  final String status;
+  final DateTime bookingDate;
+  final String barbermanName; // tambahkan ini
 
   BookingModel({
     required this.id,
-    required this.status,
+    required this.userId,
     required this.serviceName,
-    required this.datetime,
-    required this.createdAt,
+    required this.bookingTime,
+    required this.day,
+    required this.status,
+    required this.bookingDate,
+    this.barbermanName = '',
   });
 
-  factory BookingModel.fromMap(String id, Map<String, dynamic> data) {
+  factory BookingModel.fromMap(
+    String id,
+    Map<String, dynamic> map, {
+    String barbermanName = '',
+  }) {
     return BookingModel(
       id: id,
-      status: data['status'] ?? '',
-      serviceName: data['serviceName'] ?? '',
-      datetime: (data['datetime'] as Timestamp).toDate(),
-      createdAt: (data['createdAt'] as Timestamp).toDate(),
+      userId: map['userId'] ?? '',
+      serviceName: map['serviceName'] ?? '',
+      bookingTime: map['bookingTime'] ?? '',
+      day: map['day'] ?? '',
+      status: map['status'] ?? '',
+      bookingDate: _parseDate(map['datetime']),
+      barbermanName: barbermanName,
     );
   }
 
-  /// Getter opsional jika ingin ambil tanggal dan jam terpisah
-  String get bookingDate =>
-      "${datetime.year}-${datetime.month.toString().padLeft(2, '0')}-${datetime.day.toString().padLeft(2, '0')}";
-  String get bookingTime =>
-      "${datetime.hour.toString().padLeft(2, '0')}:${datetime.minute.toString().padLeft(2, '0')}";
-  String get day => _getDayName(datetime.weekday);
-
-  static String _getDayName(int weekday) {
-    const days = [
-      'Senin',
-      'Selasa',
-      'Rabu',
-      'Kamis',
-      'Jumat',
-      'Sabtu',
-      'Minggu',
-    ];
-    return days[(weekday - 1) % 7];
+  static DateTime _parseDate(dynamic value) {
+    if (value is Timestamp) {
+      return value.toDate();
+    } else if (value is String) {
+      return DateTime.tryParse(value) ?? DateTime.now();
+    } else {
+      return DateTime.now();
+    }
   }
 }

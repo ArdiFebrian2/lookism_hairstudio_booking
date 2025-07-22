@@ -17,30 +17,49 @@ class RiwayatController extends GetxController {
   }
 
   void fetchBookings() async {
+    isLoading.value = true;
     try {
-      isLoading.value = true;
       final uid = _auth.currentUser?.uid;
-
       if (uid == null) {
         bookings.clear();
         return;
       }
 
-      final query =
+      final snapshot =
           await _firestore
               .collection('bookings')
               .where('userId', isEqualTo: uid)
               .orderBy('datetime', descending: true)
               .get();
 
-      final data =
-          query.docs
-              .map((doc) => BookingModel.fromMap(doc.id, doc.data()))
-              .toList();
+      final results = await Future.wait(
+        snapshot.docs.map((doc) async {
+          final data = doc.data();
+          final barbermanId = data['barbermanId'];
 
-      bookings.assignAll(data);
+          String barbermanName = '';
+
+          if (barbermanId != null && barbermanId != '') {
+            final barberDoc =
+                await _firestore.collection('users').doc(barbermanId).get();
+
+            if (barberDoc.exists && barberDoc.data()?['role'] == 'baberman') {
+              barbermanName = barberDoc.data()?['nama'] ?? '';
+            }
+          }
+
+          return BookingModel.fromMap(
+            doc.id,
+            data,
+            barbermanName: barbermanName,
+          );
+        }).toList(),
+      );
+
+      bookings.assignAll(results);
     } catch (e) {
       print('Error fetching bookings: $e');
+      bookings.clear();
     } finally {
       isLoading.value = false;
     }
