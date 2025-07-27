@@ -51,7 +51,6 @@ class ServiceCardWidget extends StatelessWidget {
               ],
             ),
 
-            // Description
             if (service.description.isNotEmpty) ...[
               const SizedBox(height: 8),
               Text(
@@ -63,13 +62,8 @@ class ServiceCardWidget extends StatelessWidget {
             ],
 
             const SizedBox(height: 12),
-
-            // Price and Duration
             _buildPriceAndDuration(),
-
             const SizedBox(height: 12),
-
-            // Action buttons
             _buildActionButtons(),
           ],
         ),
@@ -124,10 +118,9 @@ class ServiceCardWidget extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        OutlinedButton.icon(
+        OutlinedButton(
           onPressed: onEdit,
-          icon: const Icon(Icons.edit, size: 16),
-          label: const Text('Edit'),
+          child: const Text('Edit'),
           style: OutlinedButton.styleFrom(
             foregroundColor: Colors.blue,
             side: const BorderSide(color: Colors.blue),
@@ -137,10 +130,9 @@ class ServiceCardWidget extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 8),
-        OutlinedButton.icon(
+        OutlinedButton(
           onPressed: onDelete,
-          icon: const Icon(Icons.delete, size: 16),
-          label: const Text('Hapus'),
+          child: const Text('Hapus'),
           style: OutlinedButton.styleFrom(
             foregroundColor: Colors.red,
             side: const BorderSide(color: Colors.red),

@@ -43,7 +43,6 @@ class _ServiceEditFormWidgetState extends State<ServiceEditFormWidget> {
     if (!_formKey.currentState!.validate()) return;
 
     final updatedService = ServiceModel(
-      id: widget.service.id,
       name: nameC.text,
       description: descC.text,
       price: double.tryParse(priceC.text) ?? 0.0,
@@ -53,7 +52,7 @@ class _ServiceEditFormWidgetState extends State<ServiceEditFormWidget> {
       updatedAt: DateTime.now(),
     );
 
-    controller.updateService(updatedService);
+    controller.updateServiceByName(updatedService);
     widget.onFormSubmitted?.call();
 
     Get.snackbar(

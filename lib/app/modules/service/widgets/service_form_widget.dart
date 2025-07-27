@@ -13,6 +13,7 @@ class ServiceFormWidget extends StatefulWidget {
     this.onFormSubmitted,
     this.onFormCancelled,
     this.editingService,
+    required bool isEdit,
   });
 
   @override
@@ -76,7 +77,7 @@ class _ServiceFormWidgetState extends State<ServiceFormWidget> {
     );
 
     if (isEdit.value) {
-      controller.updateService(service);
+      controller.updateServiceByName(service);
     } else {
       controller.addService(service);
     }

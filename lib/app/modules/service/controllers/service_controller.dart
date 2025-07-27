@@ -15,6 +15,7 @@ class ServiceController extends GetxController {
     fetchServices();
   }
 
+  /// Ambil data layanan dari Firestore
   Future<void> fetchServices({bool showInactive = false}) async {
     try {
       isLoading.value = true;
@@ -30,47 +31,62 @@ class ServiceController extends GetxController {
       services.value =
           snapshot.docs.map((doc) {
             final data = doc.data() as Map<String, dynamic>?;
-            // Pastikan ID document disimpan dalam model
             return ServiceModel.fromJson({'id': doc.id, ...?data});
           }).toList();
     } catch (e) {
-      Get.snackbar('Error', 'Failed to load services: $e');
+      debugPrint("Fetch services error: $e");
+      Get.snackbar('Error', 'Gagal memuat layanan: $e');
     } finally {
       isLoading.value = false;
     }
   }
 
+  /// Tambah layanan baru
   Future<void> addService(ServiceModel service) async {
     try {
       await firestore.collection('services').add(service.toJson());
       Get.snackbar('Success', 'Layanan berhasil ditambahkan');
-      fetchServices(showInactive: true);
+      await fetchServices(showInactive: true);
     } catch (e) {
+      debugPrint("Add service error: $e");
       Get.snackbar('Error', 'Gagal menambahkan layanan: $e');
     }
   }
 
-  Future<void> updateService(ServiceModel service) async {
-    if (service.id == null || service.id!.isEmpty) {
-      Get.snackbar('Error', 'ID layanan tidak ditemukan');
-      return;
-    }
-
+  /// Perbarui layanan
+  /// Perbarui layanan berdasarkan nama
+  Future<void> updateServiceByName(ServiceModel updatedService) async {
     try {
-      // Buat copy data tanpa field 'id' untuk update
-      final updateData = Map<String, dynamic>.from(service.toJson());
-      updateData.remove('id'); // Hapus field id dari data yang akan diupdate
+      final querySnapshot =
+          await firestore
+              .collection('services')
+              .where('name', isEqualTo: updatedService.name)
+              .limit(1)
+              .get();
 
-      await firestore.collection('services').doc(service.id).update(updateData);
+      if (querySnapshot.docs.isEmpty) {
+        Get.snackbar(
+          'Gagal',
+          'Layanan "${updatedService.name}" tidak ditemukan',
+        );
+        return;
+      }
 
+      final docRef = querySnapshot.docs.first.reference;
+
+      final updateData = Map<String, dynamic>.from(updatedService.toJson());
+      updateData.remove('id');
+
+      await docRef.update(updateData);
       Get.snackbar('Success', 'Layanan berhasil diperbarui');
-      fetchServices(showInactive: true);
+      await fetchServices(showInactive: true);
     } catch (e) {
+      debugPrint("Update by name error: $e");
       Get.snackbar('Error', 'Gagal memperbarui layanan: $e');
     }
   }
 
-  // Method delete berdasarkan ID (lebih efisien dan aman)
+  /// Hapus layanan berdasarkan ID
   Future<void> deleteService(
     String serviceId, {
     VoidCallback? onSuccess,
@@ -78,17 +94,16 @@ class ServiceController extends GetxController {
     try {
       await firestore.collection('services').doc(serviceId).delete();
 
-      // Refresh data setelah delete
       await fetchServices(showInactive: true);
 
-      // Panggil callback jika disediakan
       onSuccess?.call();
     } catch (e) {
+      debugPrint("Delete service error: $e");
       Get.snackbar('Error', 'Gagal menghapus layanan: $e');
     }
   }
 
-  // Method delete berdasarkan nama (jika masih diperlukan)
+  /// Hapus layanan berdasarkan nama (fallback jika ID null)
   Future<void> deleteServiceByName(
     String name, {
     VoidCallback? onSuccess,
@@ -105,37 +120,37 @@ class ServiceController extends GetxController {
         return;
       }
 
-      // Delete semua dokumen yang ditemukan
       final batch = firestore.batch();
       for (final doc in querySnapshot.docs) {
         batch.delete(doc.reference);
       }
       await batch.commit();
 
-      // Refresh data setelah delete
       await fetchServices(showInactive: true);
 
-      // Panggil callback jika disediakan
       onSuccess?.call();
     } catch (e) {
+      debugPrint("Delete by name error: $e");
       Get.snackbar('Error', 'Gagal menghapus layanan: $e');
     }
   }
 
-  // Method untuk mencari service berdasarkan ID
+  /// Cari layanan berdasarkan ID
   ServiceModel? getServiceById(String id) {
     try {
       return services.firstWhere((service) => service.id == id);
     } catch (e) {
+      debugPrint("Get by ID error: $e");
       return null;
     }
   }
 
-  // Method untuk mencari service berdasarkan nama
+  /// Cari layanan berdasarkan nama
   ServiceModel? getServiceByName(String name) {
     try {
       return services.firstWhere((service) => service.name == name);
     } catch (e) {
+      debugPrint("Get by name error: $e");
       return null;
     }
   }

@@ -5,7 +5,6 @@ import 'package:lookism_hairstudio_booking/app/modules/service/controllers/servi
 import 'package:lookism_hairstudio_booking/app/modules/service/widgets/service_form_widget.dart';
 import 'package:lookism_hairstudio_booking/app/modules/service/widgets/service_card_widget.dart';
 import 'package:lookism_hairstudio_booking/app/modules/service/widgets/empty_state_widget.dart';
-import 'package:lookism_hairstudio_booking/app/modules/service/widgets/service_edit_form_widget.dart';
 
 class ServiceView extends StatelessWidget {
   final ServiceController controller = Get.put(ServiceController());
@@ -13,88 +12,46 @@ class ServiceView extends StatelessWidget {
 
   ServiceView({super.key});
 
-  void confirmDelete(ServiceModel service) {
-    Get.dialog(
-      AlertDialog(
-        title: const Text('Konfirmasi Hapus'),
-        content: Text(
-          'Apakah Anda yakin ingin menghapus layanan "${service.name}"?',
-        ),
-        actions: [
-          TextButton(onPressed: () => Get.back(), child: const Text('Batal')),
-          ElevatedButton(
-            onPressed: () async {
-              // Tutup dialog terlebih dahulu
-              Get.back();
+  void deleteServiceWithoutDialog(ServiceModel service) async {
+    final name = service.name;
+    final onSuccess = () {
+      Get.snackbar(
+        'Berhasil',
+        'Layanan "$name" berhasil dihapus.',
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
+    };
 
-              // Gunakan ID untuk delete (lebih aman dan efisien)
-              if (service.id != null && service.id!.isNotEmpty) {
-                await controller.deleteService(
-                  service.id!,
-                  onSuccess: () {
-                    Get.snackbar(
-                      'Berhasil',
-                      'Layanan "${service.name}" berhasil dihapus.',
-                      backgroundColor: Colors.green,
-                      colorText: Colors.white,
-                    );
-                  },
-                );
-              } else {
-                // Fallback ke delete by name jika ID tidak tersedia
-                await controller.deleteServiceByName(
-                  service.name,
-                  onSuccess: () {
-                    Get.snackbar(
-                      'Berhasil',
-                      'Layanan "${service.name}" berhasil dihapus.',
-                      backgroundColor: Colors.green,
-                      colorText: Colors.white,
-                    );
-                  },
-                );
-              }
-            },
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text('Hapus', style: TextStyle(color: Colors.white)),
-          ),
-        ],
-      ),
-    );
+    if (service.id?.isNotEmpty == true) {
+      await controller.deleteService(service.id!, onSuccess: onSuccess);
+    } else {
+      await controller.deleteServiceByName(name, onSuccess: onSuccess);
+    }
   }
 
   void showEditForm(ServiceModel service) {
-    // Pastikan service memiliki ID sebelum edit
-    if (service.id == null || service.id!.isEmpty) {
-      Get.snackbar(
-        'Error',
-        'ID layanan tidak ditemukan. Tidak dapat mengedit.',
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
-      return;
-    }
-
-    Get.dialog(
-      Dialog(
-        insetPadding: const EdgeInsets.all(16),
-        child: ServiceEditFormWidget(
-          service: service,
-          onFormSubmitted: () {
-            Get.back(); // Tutup dialog
-            controller.fetchServices(showInactive: true); // Refresh data
-          },
-          onFormCancelled: () => Get.back(),
-        ),
+    Get.bottomSheet(
+      ServiceFormWidget(
+        isEdit: true,
+        editingService: service,
+        onFormSubmitted: () {
+          controller.fetchServices(showInactive: true);
+          Get.back();
+        },
+        onFormCancelled: () => Get.back(),
       ),
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    // Fetch data saat build pertama kali
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      controller.fetchServices(showInactive: true);
+      if (!controller.isLoading.value && controller.services.isEmpty) {
+        controller.fetchServices(showInactive: true);
+      }
     });
 
     return Scaffold(
@@ -117,69 +74,46 @@ class ServiceView extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header + tombol tambah
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'Daftar Layanan',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
+              Obx(() {
+                return ElevatedButton.icon(
+                  onPressed: () => showForm.toggle(),
+                  icon: Icon(showForm.value ? Icons.close : Icons.add),
+                  label: Text(showForm.value ? 'Tutup' : 'Tambah Layanan'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: showForm.value ? Colors.grey : Colors.blue,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  Obx(
-                    () => ElevatedButton.icon(
-                      onPressed: () => showForm.value = !showForm.value,
-                      icon: Icon(showForm.value ? Icons.close : Icons.add),
-                      label: Text(showForm.value ? 'Tutup' : 'Tambah Layanan'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            showForm.value ? Colors.grey : Colors.blue,
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
+                );
+              }),
+              const SizedBox(height: 16),
+              Obx(() {
+                return AnimatedCrossFade(
+                  duration: const Duration(milliseconds: 300),
+                  crossFadeState:
+                      showForm.value
+                          ? CrossFadeState.showFirst
+                          : CrossFadeState.showSecond,
+                  firstChild: Card(
+                    elevation: 2,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: ServiceFormWidget(
+                        isEdit: false,
+                        onFormSubmitted: () {
+                          showForm.value = false;
+                          controller.fetchServices(showInactive: true);
+                        },
+                        onFormCancelled: () => showForm.value = false,
                       ),
                     ),
                   ),
-                ],
-              ),
+                  secondChild: const SizedBox.shrink(),
+                );
+              }),
               const SizedBox(height: 16),
-
-              // Form Tambah Layanan
-              Obx(
-                () => AnimatedContainer(
-                  duration: const Duration(milliseconds: 300),
-                  child:
-                      showForm.value
-                          ? Card(
-                            elevation: 2,
-                            child: Padding(
-                              padding: const EdgeInsets.all(16),
-                              child: ServiceFormWidget(
-                                onFormSubmitted: () {
-                                  showForm.value = false;
-                                  controller.fetchServices(showInactive: true);
-                                },
-                                onFormCancelled: () => showForm.value = false,
-                              ),
-                            ),
-                          )
-                          : const SizedBox.shrink(),
-                ),
-              ),
-
-              // Spacing jika form ditampilkan
-              Obx(
-                () =>
-                    showForm.value
-                        ? const SizedBox(height: 16)
-                        : const SizedBox.shrink(),
-              ),
-
-              // List Layanan
               Obx(() {
                 if (controller.isLoading.value) {
                   return const Center(
@@ -200,17 +134,13 @@ class ServiceView extends StatelessWidget {
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   itemCount: controller.services.length,
-                  separatorBuilder:
-                      (context, index) => const SizedBox(height: 8),
+                  separatorBuilder: (_, __) => const SizedBox(height: 8),
                   itemBuilder: (context, index) {
                     final service = controller.services[index];
                     return ServiceCardWidget(
                       service: service,
                       onEdit: () => showEditForm(service),
-                      onDelete:
-                          () => confirmDelete(
-                            service,
-                          ), // Pass the entire service object
+                      onDelete: () => deleteServiceWithoutDialog(service),
                     );
                   },
                 );
