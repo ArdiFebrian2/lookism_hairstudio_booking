@@ -1,37 +1,59 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lookism_hairstudio_booking/app/data/models/service_model.dart';
 import 'package:lookism_hairstudio_booking/app/modules/service/controllers/service_controller.dart';
 import 'package:lookism_hairstudio_booking/app/modules/service/widgets/service_form_widget.dart';
 import 'package:lookism_hairstudio_booking/app/modules/service/widgets/service_card_widget.dart';
 import 'package:lookism_hairstudio_booking/app/modules/service/widgets/empty_state_widget.dart';
+import 'package:lookism_hairstudio_booking/app/modules/service/widgets/service_edit_form_widget.dart';
 
 class ServiceView extends StatelessWidget {
   final ServiceController controller = Get.put(ServiceController());
+  final RxBool showForm = false.obs;
 
   ServiceView({super.key});
 
-  final showForm = false.obs;
-
-  void confirmDelete(String serviceId, String serviceName) {
+  void confirmDelete(ServiceModel service) {
     Get.dialog(
       AlertDialog(
         title: const Text('Konfirmasi Hapus'),
         content: Text(
-          'Apakah Anda yakin ingin menghapus layanan "$serviceName"?',
+          'Apakah Anda yakin ingin menghapus layanan "${service.name}"?',
         ),
         actions: [
           TextButton(onPressed: () => Get.back(), child: const Text('Batal')),
           ElevatedButton(
-            onPressed: () {
-              controller.deleteService(serviceId);
+            onPressed: () async {
+              // Tutup dialog terlebih dahulu
               Get.back();
-              Get.snackbar(
-                'Berhasil',
-                'Layanan berhasil dihapus',
-                backgroundColor: Colors.red.shade100,
-                colorText: Colors.red.shade800,
-                icon: const Icon(Icons.delete, color: Colors.red),
-              );
+
+              // Gunakan ID untuk delete (lebih aman dan efisien)
+              if (service.id != null && service.id!.isNotEmpty) {
+                await controller.deleteService(
+                  service.id!,
+                  onSuccess: () {
+                    Get.snackbar(
+                      'Berhasil',
+                      'Layanan "${service.name}" berhasil dihapus.',
+                      backgroundColor: Colors.green,
+                      colorText: Colors.white,
+                    );
+                  },
+                );
+              } else {
+                // Fallback ke delete by name jika ID tidak tersedia
+                await controller.deleteServiceByName(
+                  service.name,
+                  onSuccess: () {
+                    Get.snackbar(
+                      'Berhasil',
+                      'Layanan "${service.name}" berhasil dihapus.',
+                      backgroundColor: Colors.green,
+                      colorText: Colors.white,
+                    );
+                  },
+                );
+              }
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
             child: const Text('Hapus', style: TextStyle(color: Colors.white)),
@@ -41,9 +63,39 @@ class ServiceView extends StatelessWidget {
     );
   }
 
+  void showEditForm(ServiceModel service) {
+    // Pastikan service memiliki ID sebelum edit
+    if (service.id == null || service.id!.isEmpty) {
+      Get.snackbar(
+        'Error',
+        'ID layanan tidak ditemukan. Tidak dapat mengedit.',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      return;
+    }
+
+    Get.dialog(
+      Dialog(
+        insetPadding: const EdgeInsets.all(16),
+        child: ServiceEditFormWidget(
+          service: service,
+          onFormSubmitted: () {
+            Get.back(); // Tutup dialog
+            controller.fetchServices(showInactive: true); // Refresh data
+          },
+          onFormCancelled: () => Get.back(),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    controller.fetchServices(showInactive: true);
+    // Fetch data saat build pertama kali
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.fetchServices(showInactive: true);
+    });
 
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
@@ -58,16 +110,14 @@ class ServiceView extends StatelessWidget {
         ),
       ),
       body: RefreshIndicator(
-        onRefresh: () async {
-          controller.fetchServices(showInactive: true);
-        },
+        onRefresh: () => controller.fetchServices(showInactive: true),
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
           padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header Section
+              // Header + tombol tambah
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -81,9 +131,7 @@ class ServiceView extends StatelessWidget {
                   ),
                   Obx(
                     () => ElevatedButton.icon(
-                      onPressed: () {
-                        showForm.value = !showForm.value;
-                      },
+                      onPressed: () => showForm.value = !showForm.value,
                       icon: Icon(showForm.value ? Icons.close : Icons.add),
                       label: Text(showForm.value ? 'Tutup' : 'Tambah Layanan'),
                       style: ElevatedButton.styleFrom(
@@ -100,22 +148,38 @@ class ServiceView extends StatelessWidget {
               ),
               const SizedBox(height: 16),
 
-              // Form section
+              // Form Tambah Layanan
               Obx(
                 () => AnimatedContainer(
                   duration: const Duration(milliseconds: 300),
-                  height: showForm.value ? null : 0,
                   child:
                       showForm.value
-                          ? ServiceFormWidget(
-                            onFormSubmitted: () => showForm.value = false,
-                            onFormCancelled: () => showForm.value = false,
+                          ? Card(
+                            elevation: 2,
+                            child: Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: ServiceFormWidget(
+                                onFormSubmitted: () {
+                                  showForm.value = false;
+                                  controller.fetchServices(showInactive: true);
+                                },
+                                onFormCancelled: () => showForm.value = false,
+                              ),
+                            ),
                           )
-                          : const SizedBox(),
+                          : const SizedBox.shrink(),
                 ),
               ),
 
-              // Services List
+              // Spacing jika form ditampilkan
+              Obx(
+                () =>
+                    showForm.value
+                        ? const SizedBox(height: 16)
+                        : const SizedBox.shrink(),
+              ),
+
+              // List Layanan
               Obx(() {
                 if (controller.isLoading.value) {
                   return const Center(
@@ -142,10 +206,11 @@ class ServiceView extends StatelessWidget {
                     final service = controller.services[index];
                     return ServiceCardWidget(
                       service: service,
-                      onEdit: () {
-                        showForm.value = true;
-                      },
-                      onDelete: () => confirmDelete(service.id!, service.name),
+                      onEdit: () => showEditForm(service),
+                      onDelete:
+                          () => confirmDelete(
+                            service,
+                          ), // Pass the entire service object
                     );
                   },
                 );
