@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lookism_hairstudio_booking/app/modules/home_admin/views/home_admin_view.dart';
-import 'package:lookism_hairstudio_booking/app/modules/laporan/views/laporan_view.dart';
+// import 'package:lookism_hairstudio_booking/app/modules/laporan/views/laporan_view.dart';
 import 'package:lookism_hairstudio_booking/app/modules/profile_admin/views/profile_admin_view.dart';
+import 'package:lookism_hairstudio_booking/app/modules/report/views/report_view.dart';
 import 'package:lookism_hairstudio_booking/app/modules/review_customer/views/review_customer_view.dart';
 
 import '../controllers/navbar_admin_controller.dart';
@@ -12,11 +13,11 @@ class NavbarAdminView extends GetView<NavbarAdminController> {
 
   @override
   Widget build(BuildContext context) {
-    final List<Widget> pages = const [
-      HomeAdminView(),
-      ReviewCustomerView(),
-      LaporanView(),
-      ProfileAdminView(),
+    final List<Widget> pages = [
+      const HomeAdminView(),
+      const ReviewCustomerView(),
+      ReportView(),
+      const ProfileAdminView(),
     ];
 
     return Obx(

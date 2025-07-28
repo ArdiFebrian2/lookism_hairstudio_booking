@@ -30,10 +30,6 @@ import '../modules/navbar_baberman/bindings/navbar_baberman_binding.dart';
 import '../modules/navbar_baberman/views/navbar_baberman_view.dart';
 import '../modules/navbar_customer/bindings/navbar_customer_binding.dart';
 import '../modules/navbar_customer/views/navbar_customer_view.dart';
-import '../modules/pembayaran/bindings/pembayaran_binding.dart';
-import '../modules/pembayaran/views/pembayaran_view.dart';
-import '../modules/pemesanan/bindings/pemesanan_binding.dart';
-import '../modules/pemesanan/views/pemesanan_view.dart';
 import '../modules/penghasilan_baberman/bindings/penghasilan_baberman_binding.dart';
 import '../modules/penghasilan_baberman/views/penghasilan_baberman_view.dart';
 import '../modules/profile_admin/bindings/profile_admin_binding.dart';
@@ -46,6 +42,8 @@ import '../modules/rating_customer/bindings/rating_customer_binding.dart';
 import '../modules/rating_customer/views/rating_customer_view.dart';
 import '../modules/register/bindings/register_binding.dart';
 import '../modules/register/views/register_view.dart';
+import '../modules/report/bindings/report_binding.dart';
+import '../modules/report/views/report_view.dart';
 import '../modules/review_customer/bindings/review_customer_binding.dart';
 import '../modules/review_customer/views/review_customer_view.dart';
 import '../modules/riwayat/bindings/riwayat_binding.dart';
@@ -104,11 +102,6 @@ class AppPages {
       binding: NavbarAdminBinding(),
     ),
     GetPage(
-      name: _Paths.PEMESANAN,
-      page: () => const PemesananView(),
-      binding: PemesananBinding(),
-    ),
-    GetPage(
       name: _Paths.ADMIN_NOTIFIKASI,
       page: () => const AdminNotifikasiView(),
       binding: AdminNotifikasiBinding(),
@@ -128,11 +121,7 @@ class AppPages {
       page: () => const BookingView(),
       binding: BookingBinding(),
     ),
-    GetPage(
-      name: _Paths.PEMBAYARAN,
-      page: () => const PembayaranView(),
-      binding: PembayaranBinding(),
-    ),
+
     GetPage(
       name: _Paths.RIWAYAT,
       page: () => const RiwayatView(),
@@ -197,6 +186,11 @@ class AppPages {
       name: _Paths.REVIEW_CUSTOMER,
       page: () => const ReviewCustomerView(),
       binding: ReviewCustomerBinding(),
+    ),
+    GetPage(
+      name: _Paths.REPORT,
+      page: () => ReportView(),
+      binding: ReportBinding(),
     ),
   ];
 }

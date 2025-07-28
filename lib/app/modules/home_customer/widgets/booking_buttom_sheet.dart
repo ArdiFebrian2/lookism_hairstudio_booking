@@ -197,7 +197,6 @@ class BookingBottomSheet extends GetView<HomeCustomerController> {
         const SizedBox(height: 20),
         _buildDateTimeSelection(),
         const SizedBox(height: 20),
-        _buildNotesInput(),
       ],
     );
   }
@@ -414,40 +413,6 @@ class BookingBottomSheet extends GetView<HomeCustomerController> {
               onTap: () => controller.selectTime(Get.context!),
               contentPadding: const EdgeInsets.symmetric(horizontal: 12),
             ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildNotesInput() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Catatan Tambahan (Opsional)',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            color: Colors.black87,
-          ),
-        ),
-        const SizedBox(height: 12),
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.grey[50],
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.grey[200]!),
-          ),
-          child: TextField(
-            maxLines: 3,
-            decoration: const InputDecoration(
-              hintText: 'Tuliskan preferensi atau permintaan khusus...',
-              border: InputBorder.none,
-              contentPadding: EdgeInsets.all(16),
-              prefixIcon: Icon(Icons.note_outlined),
-            ),
-            style: const TextStyle(fontSize: 14),
           ),
         ),
       ],

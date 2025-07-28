@@ -33,6 +33,7 @@ abstract class Routes {
   static const SERVICE = _Paths.SERVICE;
   static const RATING_CUSTOMER = _Paths.RATING_CUSTOMER;
   static const REVIEW_CUSTOMER = _Paths.REVIEW_CUSTOMER;
+  static const REPORT = _Paths.REPORT;
 }
 
 abstract class _Paths {
@@ -67,4 +68,5 @@ abstract class _Paths {
   static const SERVICE = '/service';
   static const RATING_CUSTOMER = '/rating-customer';
   static const REVIEW_CUSTOMER = '/review-customer';
+  static const REPORT = '/report';
 }

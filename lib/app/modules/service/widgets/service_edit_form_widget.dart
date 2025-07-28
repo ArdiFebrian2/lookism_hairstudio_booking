@@ -71,150 +71,163 @@ class _ServiceEditFormWidgetState extends State<ServiceEditFormWidget> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
+      insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 32),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'Edit Layanan',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: _handleCancel,
-                    icon: const Icon(Icons.close),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              Form(
-                key: _formKey,
-                child: Column(
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.of(context).size.height * 0.9,
+        ),
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    _buildTextField(
-                      controller: nameC,
-                      label: 'Nama Layanan',
-                      icon: Icons.content_cut,
-                      validator:
-                          (val) =>
-                              val!.isEmpty ? 'Nama layanan wajib diisi' : null,
-                    ),
-                    const SizedBox(height: 16),
-                    _buildTextField(
-                      controller: descC,
-                      label: 'Deskripsi Layanan',
-                      icon: Icons.description,
-                      maxLines: 3,
-                    ),
-                    const SizedBox(height: 16),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: _buildTextField(
-                            controller: priceC,
-                            label: 'Harga (Rp)',
-                            icon: Icons.attach_money,
-                            keyboardType: TextInputType.number,
-                            validator:
-                                (val) =>
-                                    val!.isEmpty ? 'Harga wajib diisi' : null,
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: _buildTextField(
-                            controller: durationC,
-                            label: 'Durasi (menit)',
-                            icon: Icons.access_time,
-                            keyboardType: TextInputType.number,
-                            validator:
-                                (val) =>
-                                    val!.isEmpty ? 'Durasi wajib diisi' : null,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    Obx(
-                      () => Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 8,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.grey.shade50,
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: Colors.grey.shade300),
-                        ),
-                        child: SwitchListTile(
-                          title: const Text('Aktifkan Layanan'),
-                          subtitle: Text(
-                            isActive.value
-                                ? 'Layanan akan tersedia untuk booking'
-                                : 'Layanan tidak tersedia',
-                            style: TextStyle(
-                              color: isActive.value ? Colors.green : Colors.red,
-                              fontSize: 12,
-                            ),
-                          ),
-                          value: isActive.value,
-                          onChanged: (val) => isActive.value = val,
-                          activeColor: Colors.green,
-                        ),
+                    const Text(
+                      'Edit Layanan',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
                       ),
                     ),
-                    const SizedBox(height: 24),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: ElevatedButton(
-                            onPressed: _handleSubmit,
+                    IconButton(
+                      onPressed: _handleCancel,
+                      icon: const Icon(Icons.close),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      _buildTextField(
+                        controller: nameC,
+                        label: 'Nama Layanan',
+                        icon: Icons.content_cut,
+                        validator:
+                            (val) =>
+                                val!.isEmpty
+                                    ? 'Nama layanan wajib diisi'
+                                    : null,
+                      ),
+                      const SizedBox(height: 16),
+                      _buildTextField(
+                        controller: descC,
+                        label: 'Deskripsi Layanan',
+                        icon: Icons.description,
+                        maxLines: 3,
+                      ),
+                      const SizedBox(height: 16),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _buildTextField(
+                              controller: priceC,
+                              label: 'Harga (Rp)',
+                              icon: Icons.attach_money,
+                              keyboardType: TextInputType.number,
+                              validator:
+                                  (val) =>
+                                      val!.isEmpty ? 'Harga wajib diisi' : null,
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: _buildTextField(
+                              controller: durationC,
+                              label: 'Durasi (menit)',
+                              icon: Icons.access_time,
+                              keyboardType: TextInputType.number,
+                              validator:
+                                  (val) =>
+                                      val!.isEmpty
+                                          ? 'Durasi wajib diisi'
+                                          : null,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      Obx(
+                        () => Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade50,
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: Colors.grey.shade300),
+                          ),
+                          child: SwitchListTile(
+                            title: const Text('Aktifkan Layanan'),
+                            subtitle: Text(
+                              isActive.value
+                                  ? 'Layanan akan tersedia untuk booking'
+                                  : 'Layanan tidak tersedia',
+                              style: TextStyle(
+                                color:
+                                    isActive.value ? Colors.green : Colors.red,
+                                fontSize: 12,
+                              ),
+                            ),
+                            value: isActive.value,
+                            onChanged: (val) => isActive.value = val,
+                            activeColor: Colors.green,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: ElevatedButton(
+                              onPressed: _handleSubmit,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.blue,
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 16,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              child: const Text(
+                                'Simpan Perubahan',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          ElevatedButton(
+                            onPressed: _handleCancel,
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.blue,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              backgroundColor: Colors.grey.shade300,
+                              foregroundColor: Colors.black87,
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 16,
+                                horizontal: 24,
+                              ),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8),
                               ),
                             ),
-                            child: const Text(
-                              'Simpan Perubahan',
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
+                            child: const Text('Batal'),
                           ),
-                        ),
-                        const SizedBox(width: 12),
-                        ElevatedButton(
-                          onPressed: _handleCancel,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.grey.shade300,
-                            foregroundColor: Colors.black87,
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 16,
-                              horizontal: 24,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                          child: const Text('Batal'),
-                        ),
-                      ],
-                    ),
-                  ],
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
