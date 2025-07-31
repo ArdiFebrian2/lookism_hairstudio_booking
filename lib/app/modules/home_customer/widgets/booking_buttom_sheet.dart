@@ -119,37 +119,37 @@ class BookingBottomSheet extends GetView<HomeCustomerController> {
       ),
       child: Row(
         children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child:
-                service.image != null
-                    ? Image.network(
-                      service.image!,
-                      width: 70,
-                      height: 70,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container(
-                          width: 70,
-                          height: 70,
-                          color: Colors.grey[300],
-                          child: const Icon(
-                            Icons.content_cut,
-                            color: Colors.grey,
-                          ),
-                        );
-                      },
-                    )
-                    : Container(
-                      width: 70,
-                      height: 70,
-                      decoration: BoxDecoration(
-                        color: Colors.deepPurple,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: const Icon(Icons.content_cut, color: Colors.white),
-                    ),
-          ),
+          // ClipRRect(
+          //   borderRadius: BorderRadius.circular(12),
+          //   child:
+          //       // service.image != null
+          //           ? Image.network(
+          //             // service.image!,
+          //             width: 70,
+          //             height: 70,
+          //             fit: BoxFit.cover,
+          //             errorBuilder: (context, error, stackTrace) {
+          //               return Container(
+          //                 width: 70,
+          //                 height: 70,
+          //                 color: Colors.grey[300],
+          //                 child: const Icon(
+          //                   Icons.content_cut,
+          //                   color: Colors.grey,
+          //                 ),
+          //               );
+          //             },
+          //           )
+          //           : Container(
+          //             width: 70,
+          //             height: 70,
+          //             decoration: BoxDecoration(
+          //               color: Colors.deepPurple,
+          //               borderRadius: BorderRadius.circular(12),
+          //             ),
+          //             child: const Icon(Icons.content_cut, color: Colors.white),
+          //           ),
+          // ),
           const SizedBox(width: 16),
           Expanded(
             child: Column(

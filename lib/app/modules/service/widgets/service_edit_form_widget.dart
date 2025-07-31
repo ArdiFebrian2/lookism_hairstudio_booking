@@ -52,7 +52,7 @@ class _ServiceEditFormWidgetState extends State<ServiceEditFormWidget> {
       updatedAt: DateTime.now(),
     );
 
-    controller.updateServiceByName(updatedService);
+    controller.updateService(updatedService);
     widget.onFormSubmitted?.call();
 
     Get.snackbar(

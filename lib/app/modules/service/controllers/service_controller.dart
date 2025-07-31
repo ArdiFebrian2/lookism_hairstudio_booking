@@ -55,33 +55,23 @@ class ServiceController extends GetxController {
 
   /// Perbarui layanan
   /// Perbarui layanan berdasarkan nama
-  Future<void> updateServiceByName(ServiceModel updatedService) async {
+  Future<void> updateService(ServiceModel updatedService) async {
     try {
-      final querySnapshot =
-          await firestore
-              .collection('services')
-              .where('name', isEqualTo: updatedService.name)
-              .limit(1)
-              .get();
-
-      if (querySnapshot.docs.isEmpty) {
-        Get.snackbar(
-          'Gagal',
-          'Layanan "${updatedService.name}" tidak ditemukan',
-        );
+      if (updatedService.id == null) {
+        Get.snackbar('Gagal', 'ID layanan tidak ditemukan');
         return;
       }
 
-      final docRef = querySnapshot.docs.first.reference;
+      final docRef = firestore.collection('services').doc(updatedService.id);
 
       final updateData = Map<String, dynamic>.from(updatedService.toJson());
-      updateData.remove('id');
+      updateData.remove('id'); // ID tidak perlu diupdate di Firestore
 
       await docRef.update(updateData);
       Get.snackbar('Success', 'Layanan berhasil diperbarui');
       await fetchServices(showInactive: true);
     } catch (e) {
-      debugPrint("Update by name error: $e");
+      debugPrint("Update service error: $e");
       Get.snackbar('Error', 'Gagal memperbarui layanan: $e');
     }
   }

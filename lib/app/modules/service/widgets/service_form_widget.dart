@@ -77,7 +77,7 @@ class _ServiceFormWidgetState extends State<ServiceFormWidget> {
     );
 
     if (isEdit.value) {
-      controller.updateServiceByName(service);
+      controller.updateService(service);
     } else {
       controller.addService(service);
     }

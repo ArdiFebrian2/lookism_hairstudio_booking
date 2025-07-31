@@ -17,26 +17,15 @@ class LoginView extends GetView<LoginController> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  Container(
-                    width: 100,
-                    height: 100,
-                    decoration: BoxDecoration(
-                      color: Colors.deepPurple,
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.deepPurple.withOpacity(0.3),
-                          blurRadius: 20,
-                          offset: const Offset(0, 10),
-                        ),
-                      ],
-                    ),
-                    child: const Icon(
-                      Icons.content_cut,
-                      size: 50,
-                      color: Colors.white,
-                    ),
+                  Image.asset(
+                    'assets/images/login.png',
+                    fit: BoxFit.contain,
+                    width:
+                        MediaQuery.of(context).size.width *
+                        0.6, // 60% lebar layar
+                    height: 150,
                   ),
+
                   const SizedBox(height: 32),
                   Text(
                     "Selamat Datang",

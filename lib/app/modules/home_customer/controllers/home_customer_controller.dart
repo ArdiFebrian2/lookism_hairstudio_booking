@@ -173,7 +173,7 @@ class HomeCustomerController extends GetxController {
 
       await FirebaseFirestore.instance.collection('bookings').add({
         'userId': userId,
-        'serviceId': service.id,
+        // 'serviceId': service.id,
         'serviceName': service.name,
         'barbermanId': selectedBarberman.value,
         'datetime': bookingDateTime.toIso8601String(),

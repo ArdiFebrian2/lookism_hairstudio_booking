@@ -17,25 +17,13 @@ class RegisterView extends GetView<RegisterController> {
               child: Column(
                 children: [
                   // Logo/Brand
-                  Container(
-                    width: 100,
-                    height: 100,
-                    decoration: BoxDecoration(
-                      color: Colors.deepPurple,
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.deepPurple.withOpacity(0.3),
-                          blurRadius: 20,
-                          offset: Offset(0, 10),
-                        ),
-                      ],
-                    ),
-                    child: Icon(
-                      Icons.content_cut,
-                      size: 50,
-                      color: Colors.white,
-                    ),
+                  Image.asset(
+                    'assets/images/login.png',
+                    fit: BoxFit.contain,
+                    width:
+                        MediaQuery.of(context).size.width *
+                        0.6, // 60% lebar layar
+                    height: 150,
                   ),
                   SizedBox(height: 32),
 
@@ -53,7 +41,7 @@ class RegisterView extends GetView<RegisterController> {
                     "Daftar untuk mulai booking dengan Lookism Hairstudio",
                     style: TextStyle(fontSize: 16, color: Colors.grey[600]),
                   ),
-                  SizedBox(height: 40),
+                  SizedBox(height: 30),
 
                   // Form Container
                   Container(
