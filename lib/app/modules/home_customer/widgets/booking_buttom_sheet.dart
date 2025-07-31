@@ -82,7 +82,7 @@ class BookingBottomSheet extends GetView<HomeCustomerController> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text(
-                'Booking Appointment',
+                'Isi Data Booking',
                 style: TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,

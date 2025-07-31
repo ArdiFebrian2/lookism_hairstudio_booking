@@ -9,7 +9,6 @@ import 'package:lookism_hairstudio_booking/app/modules/service/controllers/servi
 class HomeCustomerController extends GetxController {
   late final ServiceController serviceController;
 
-  // Booking form variables
   final selectedBarberman = Rxn<String>();
   final selectedDate = Rxn<DateTime>();
   final selectedTime = Rxn<TimeOfDay>();
@@ -37,7 +36,7 @@ class HomeCustomerController extends GetxController {
     final snapshot =
         await FirebaseFirestore.instance
             .collection('users')
-            .where('role', isEqualTo: 'baberman') // typo? maybe 'barberman'
+            .where('role', isEqualTo: 'baberman') // pastikan penulisan benar
             .get();
     return snapshot.docs;
   }
@@ -118,6 +117,21 @@ class HomeCustomerController extends GetxController {
         selectedTime.value != null;
   }
 
+  /// Cek apakah barberman memiliki booking lain di waktu yang sama (jam dan menit persis)
+  Future<bool> isScheduleAvailable(
+    String barbermanId,
+    DateTime bookingDateTime,
+  ) async {
+    final snapshot =
+        await FirebaseFirestore.instance
+            .collection('bookings')
+            .where('barbermanId', isEqualTo: barbermanId)
+            .where('datetime', isEqualTo: bookingDateTime.toIso8601String())
+            .get();
+
+    return snapshot.docs.isEmpty;
+  }
+
   Future<void> submitBooking(ServiceModel service) async {
     if (!validateBookingForm()) {
       Get.snackbar(
@@ -141,8 +155,24 @@ class HomeCustomerController extends GetxController {
         selectedTime.value!.minute,
       );
 
+      final isAvailable = await isScheduleAvailable(
+        selectedBarberman.value!,
+        bookingDateTime,
+      );
+
+      if (!isAvailable) {
+        Get.snackbar(
+          'Jadwal penuh',
+          'Barberman telah memiliki booking di jam tersebut. Silakan pilih waktu lain.',
+          backgroundColor: Colors.orange,
+          colorText: Colors.white,
+          snackPosition: SnackPosition.TOP,
+        );
+        return;
+      }
+
       await FirebaseFirestore.instance.collection('bookings').add({
-        'userId': userId, // ← penting untuk menghubungkan dengan user customer
+        'userId': userId,
         'serviceId': service.id,
         'serviceName': service.name,
         'barbermanId': selectedBarberman.value,

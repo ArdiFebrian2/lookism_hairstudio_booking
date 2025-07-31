@@ -32,78 +32,78 @@ class ServiceCard extends StatelessWidget {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [_buildServiceImage(), _buildServiceContent()],
+        children: [_buildServiceContent()],
       ),
     );
   }
 
-  Widget _buildServiceImage() {
-    return ClipRRect(
-      borderRadius: const BorderRadius.only(
-        topLeft: Radius.circular(20),
-        topRight: Radius.circular(20),
-      ),
-      child: Stack(
-        children: [
-          service.image != null
-              ? Image.network(
-                service.image!,
-                width: double.infinity,
-                height: 200,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return _buildPlaceholderImage();
-                },
-              )
-              : _buildPlaceholderImage(),
+  // Widget _buildServiceImage() {
+  //   return ClipRRect(
+  //     borderRadius: const BorderRadius.only(
+  //       topLeft: Radius.circular(20),
+  //       topRight: Radius.circular(20),
+  //     ),
+  //     child: Stack(
+  //       children: [
+  //         service.image != null
+  //             ? Image.network(
+  //               service.image!,
+  //               width: double.infinity,
+  //               height: 200,
+  //               fit: BoxFit.cover,
+  //               errorBuilder: (context, error, stackTrace) {
+  //                 return _buildPlaceholderImage();
+  //               },
+  //             )
+  //             : _buildPlaceholderImage(),
 
-          Positioned(
-            bottom: 16,
-            left: 16,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.7),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.access_time, color: Colors.white, size: 14),
-                  SizedBox(width: 4),
-                  Text(
-                    '45 min',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  //         Positioned(
+  //           bottom: 16,
+  //           left: 16,
+  //           child: Container(
+  //             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+  //             decoration: BoxDecoration(
+  //               color: Colors.black.withOpacity(0.7),
+  //               borderRadius: BorderRadius.circular(8),
+  //             ),
+  //             child: const Row(
+  //               mainAxisSize: MainAxisSize.min,
+  //               children: [
+  //                 Icon(Icons.access_time, color: Colors.white, size: 14),
+  //                 SizedBox(width: 4),
+  //                 Text(
+  //                   '45 min',
+  //                   style: TextStyle(
+  //                     color: Colors.white,
+  //                     fontSize: 12,
+  //                     fontWeight: FontWeight.w500,
+  //                   ),
+  //                 ),
+  //               ],
+  //             ),
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
-  Widget _buildPlaceholderImage() {
-    return Container(
-      width: double.infinity,
-      height: 200,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Colors.deepPurple.shade300, Colors.deepPurple.shade600],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-      ),
-      child: const Center(
-        child: Icon(Icons.content_cut, size: 60, color: Colors.white),
-      ),
-    );
-  }
+  // Widget _buildPlaceholderImage() {
+  //   return Container(
+  //     width: double.infinity,
+  //     height: 200,
+  //     decoration: BoxDecoration(
+  //       gradient: LinearGradient(
+  //         colors: [Colors.deepPurple.shade300, Colors.deepPurple.shade600],
+  //         begin: Alignment.topLeft,
+  //         end: Alignment.bottomRight,
+  //       ),
+  //     ),
+  //     child: const Center(
+  //       child: Icon(Icons.content_cut, size: 60, color: Colors.white),
+  //     ),
+  //   );
+  // }
 
   Widget _buildServiceContent() {
     return Padding(
@@ -126,27 +126,27 @@ class ServiceCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 4),
-                    Row(
-                      children: [
-                        Icon(Icons.star, color: Colors.amber, size: 16),
-                        const SizedBox(width: 4),
-                        const Text(
-                          '4.9',
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          '(127 ulasan)',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                      ],
-                    ),
+                    // Row(
+                    //   children: [
+                    //     Icon(Icons.star, color: Colors.amber, size: 16),
+                    //     const SizedBox(width: 4),
+                    //     const Text(
+                    //       '4.9',
+                    //       style: TextStyle(
+                    //         fontSize: 12,
+                    //         fontWeight: FontWeight.w500,
+                    //       ),
+                    //     ),
+                    //     const SizedBox(width: 8),
+                    //     Text(
+                    //       '(127 ulasan)',
+                    //       style: TextStyle(
+                    //         fontSize: 12,
+                    //         color: Colors.grey[600],
+                    //       ),
+                    //     ),
+                    //   ],
+                    // ),
                   ],
                 ),
               ),
