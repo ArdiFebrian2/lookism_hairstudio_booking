@@ -7,14 +7,16 @@ import 'package:lookism_hairstudio_booking/app/modules/home_barber/widgets/booki
 
 class BookingCard extends StatelessWidget {
   final Map<String, dynamic> booking;
-  final VoidCallback onAccept;
-  final VoidCallback onReject;
+  final VoidCallback? onAccept;
+  final VoidCallback? onReject;
+  final VoidCallback? onComplete;
 
   const BookingCard({
     super.key,
     required this.booking,
-    required this.onAccept,
-    required this.onReject,
+    this.onAccept,
+    this.onReject,
+    this.onComplete,
   });
 
   @override
@@ -117,6 +119,7 @@ class BookingCard extends StatelessWidget {
                         'Telepon',
                         booking['customerPhone'] ?? '-',
                       ),
+                      Text('Harga: Rp ${booking['price']}'),
                     ],
                   ),
                 ),
@@ -135,8 +138,9 @@ class BookingCard extends StatelessWidget {
                 ),
 
                 // Action Buttons (only for pending status)
-                if (status == 'pending') ...[
-                  const SizedBox(height: 20),
+                if (status == 'pending' &&
+                    onAccept != null &&
+                    onReject != null) ...[
                   Container(
                     padding: const EdgeInsets.only(top: 16),
                     decoration: BoxDecoration(
@@ -145,8 +149,26 @@ class BookingCard extends StatelessWidget {
                       ),
                     ),
                     child: BookingActionButtons(
-                      onAccept: onAccept,
-                      onReject: onReject,
+                      onAccept: onAccept!,
+                      onReject: onReject!,
+                    ),
+                  ),
+                ] else if (status == 'accepted' && onComplete != null) ...[
+                  Container(
+                    width: double.infinity,
+                    margin: const EdgeInsets.only(top: 16),
+                    child: ElevatedButton.icon(
+                      onPressed: onComplete,
+                      icon: const Icon(Icons.check_circle_outline),
+                      label: const Text('Tandai Selesai'),
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        backgroundColor: Colors.green,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                      ),
                     ),
                   ),
                 ],

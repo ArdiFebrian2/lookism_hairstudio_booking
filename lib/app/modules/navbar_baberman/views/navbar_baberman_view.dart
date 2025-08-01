@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lookism_hairstudio_booking/app/modules/home_barber/views/home_barber_view.dart';
-import 'package:lookism_hairstudio_booking/app/modules/penghasilan_baberman/views/penghasilan_baberman_view.dart';
 import 'package:lookism_hairstudio_booking/app/modules/profile_baberman/views/profile_baberman_view.dart';
+import 'package:lookism_hairstudio_booking/app/modules/riwayat_baberman/views/riwayat_baberman_view.dart';
 import '../controllers/navbar_baberman_controller.dart';
 
 class NavbarBabermanView extends GetView<NavbarBabermanController> {
@@ -10,10 +10,10 @@ class NavbarBabermanView extends GetView<NavbarBabermanController> {
 
   @override
   Widget build(BuildContext context) {
-    final List<Widget> pages = const [
-      HomeBarberView(), // index 0
-      PenghasilanBabermanView(), // index 1
-      ProfileBabermanView(), // index 2
+    final List<Widget> pages = [
+      const HomeBarberView(), // index 0
+      RiwayatBabermanView(), // index 1
+      const ProfileBabermanView(), // index 2
     ];
 
     return Obx(

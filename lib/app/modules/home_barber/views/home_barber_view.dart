@@ -1,4 +1,3 @@
-// views/home_barber_view.dart
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/home_barber_controller.dart';
@@ -6,17 +5,17 @@ import '../widgets/booking_card.dart';
 import '../widgets/loading_widget.dart';
 import '../widgets/empty_booking_widget.dart';
 
-class HomeBarberView extends GetView<HomeBarberController> {
+class HomeBarberView extends StatelessWidget {
   const HomeBarberView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    Get.lazyPut<HomeBarberController>(() => HomeBarberController());
+    final controller = Get.put(HomeBarberController());
 
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: _buildAppBar(),
-      body: Obx(() => _buildBody()),
+      body: Obx(() => _buildBody(controller)),
     );
   }
 
@@ -34,7 +33,7 @@ class HomeBarberView extends GetView<HomeBarberController> {
     );
   }
 
-  Widget _buildBody() {
+  Widget _buildBody(HomeBarberController controller) {
     if (controller.isLoading.value) {
       return const LoadingWidget();
     }
@@ -44,10 +43,7 @@ class HomeBarberView extends GetView<HomeBarberController> {
     }
 
     return RefreshIndicator(
-      onRefresh: () async {
-        // Add refresh functionality here
-        controller.fetchBookings();
-      },
+      onRefresh: () async => controller.fetchBookings(),
       child: ListView.builder(
         padding: const EdgeInsets.all(16),
         itemCount: controller.bookings.length,
@@ -59,6 +55,8 @@ class HomeBarberView extends GetView<HomeBarberController> {
                 () => controller.updateBookingStatus(booking['id'], 'accepted'),
             onReject:
                 () => controller.updateBookingStatus(booking['id'], 'rejected'),
+            onComplete:
+                () => controller.updateBookingStatus(booking['id'], 'selesai'),
           );
         },
       ),

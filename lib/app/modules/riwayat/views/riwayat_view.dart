@@ -78,7 +78,7 @@ class RiwayatView extends StatelessWidget {
                         ),
                         const SizedBox(width: 6),
                         Text(
-                          '${booking.day}, ${DateFormat('dd MMM yyyy').format(booking.bookingDate)}',
+                          'Tanggal ${DateFormat('dd MMM yyyy').format(booking.bookingDate)}',
                           style: const TextStyle(
                             fontSize: 13,
                             color: Colors.grey,
@@ -87,23 +87,23 @@ class RiwayatView extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 6),
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.access_time,
-                          color: Colors.deepPurple,
-                          size: 18,
-                        ),
-                        const SizedBox(width: 6),
-                        Text(
-                          'Pukul ${booking.bookingTime}',
-                          style: const TextStyle(
-                            fontSize: 13,
-                            color: Colors.grey,
-                          ),
-                        ),
-                      ],
-                    ),
+                    // Row(
+                    //   children: [
+                    //     const Icon(
+                    //       Icons.access_time,
+                    //       color: Colors.deepPurple,
+                    //       size: 18,
+                    //     ),
+                    //     const SizedBox(width: 6),
+                    //     // Text(
+                    //     //   'Pukul ${booking.bookingTime}',
+                    //     //   style: const TextStyle(
+                    //     //     fontSize: 13,
+                    //     //     color: Colors.grey,
+                    //     //   ),
+                    //     // ),
+                    //   ],
+                    // ),
                     const SizedBox(height: 6),
                     Row(
                       children: [
@@ -153,9 +153,9 @@ class RiwayatView extends StatelessWidget {
         return Colors.orange;
       case 'accepted':
         return Colors.blue;
-      case 'done':
+      case 'selesai':
         return Colors.green;
-      case 'cancelled':
+      case 'rejected':
         return Colors.red;
       default:
         return Colors.grey;

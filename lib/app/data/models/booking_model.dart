@@ -3,16 +3,18 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class BookingModel {
   final String id;
   final String userId;
+  final String name; // Nama customer
   final String serviceName;
   final String bookingTime;
   final String day;
   final String status;
   final DateTime bookingDate;
-  final String barbermanName; // tambahkan ini
+  final String barbermanName;
 
   BookingModel({
     required this.id,
     required this.userId,
+    required this.name,
     required this.serviceName,
     required this.bookingTime,
     required this.day,
@@ -29,10 +31,11 @@ class BookingModel {
     return BookingModel(
       id: id,
       userId: map['userId'] ?? '',
-      serviceName: map['serviceName'] ?? '',
-      bookingTime: map['bookingTime'] ?? '',
-      day: map['day'] ?? '',
-      status: map['status'] ?? '',
+      name: map['nama'] ?? 'Tanpa Nama',
+      serviceName: map['serviceName'] ?? '-',
+      bookingTime: map['bookingTime'] ?? '-',
+      day: map['day'] ?? 'Tidak diketahui',
+      status: map['status'] ?? '-',
       bookingDate: _parseDate(map['datetime']),
       barbermanName: barbermanName,
     );

@@ -30,8 +30,6 @@ import '../modules/navbar_baberman/bindings/navbar_baberman_binding.dart';
 import '../modules/navbar_baberman/views/navbar_baberman_view.dart';
 import '../modules/navbar_customer/bindings/navbar_customer_binding.dart';
 import '../modules/navbar_customer/views/navbar_customer_view.dart';
-import '../modules/penghasilan_baberman/bindings/penghasilan_baberman_binding.dart';
-import '../modules/penghasilan_baberman/views/penghasilan_baberman_view.dart';
 import '../modules/profile_admin/bindings/profile_admin_binding.dart';
 import '../modules/profile_admin/views/profile_admin_view.dart';
 import '../modules/profile_baberman/bindings/profile_baberman_binding.dart';
@@ -48,6 +46,8 @@ import '../modules/review_customer/bindings/review_customer_binding.dart';
 import '../modules/review_customer/views/review_customer_view.dart';
 import '../modules/riwayat/bindings/riwayat_binding.dart';
 import '../modules/riwayat/views/riwayat_view.dart';
+import '../modules/riwayat_baberman/bindings/riwayat_baberman_binding.dart';
+import '../modules/riwayat_baberman/views/riwayat_baberman_view.dart';
 import '../modules/service/bindings/service_binding.dart';
 import '../modules/service/views/service_view.dart';
 import '../modules/splashscreen/bindings/splashscreen_binding.dart';
@@ -121,7 +121,6 @@ class AppPages {
       page: () => const BookingView(),
       binding: BookingBinding(),
     ),
-
     GetPage(
       name: _Paths.RIWAYAT,
       page: () => const RiwayatView(),
@@ -158,11 +157,6 @@ class AppPages {
       binding: NavbarBabermanBinding(),
     ),
     GetPage(
-      name: _Paths.PENGHASILAN_BABERMAN,
-      page: () => const PenghasilanBabermanView(),
-      binding: PenghasilanBabermanBinding(),
-    ),
-    GetPage(
       name: _Paths.PROFILE_BABERMAN,
       page: () => const ProfileBabermanView(),
       binding: ProfileBabermanBinding(),
@@ -191,6 +185,11 @@ class AppPages {
       name: _Paths.REPORT,
       page: () => ReportView(),
       binding: ReportBinding(),
+    ),
+    GetPage(
+      name: _Paths.RIWAYAT_BABERMAN,
+      page: () => RiwayatBabermanView(),
+      binding: RiwayatBabermanBinding(),
     ),
   ];
 }

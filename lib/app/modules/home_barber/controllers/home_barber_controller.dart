@@ -36,6 +36,11 @@ class HomeBarberController extends GetxController {
         data['id'] = doc.id;
 
         final String? userId = data['userId'];
+        final String? status = data['status'];
+
+        if (status == 'selesai' || status == 'rejected') {
+          continue; // Lewati booking selesai atau ditolak
+        }
 
         if (userId != null && userId.isNotEmpty) {
           try {
@@ -53,6 +58,29 @@ class HomeBarberController extends GetxController {
                 data['customerName'] = userData?['name'] ?? 'Tidak diketahui';
                 data['customerEmail'] = userData?['email'] ?? '-';
                 data['customerPhone'] = userData?['phone'] ?? '-';
+
+                // ✅ Ambil harga dari service
+                final serviceId = data['serviceId'];
+                if (serviceId != null) {
+                  try {
+                    final serviceDoc =
+                        await FirebaseFirestore.instance
+                            .collection('services')
+                            .doc(serviceId)
+                            .get();
+
+                    if (serviceDoc.exists) {
+                      final serviceData = serviceDoc.data();
+                      data['price'] = serviceData?['price'] ?? 0;
+                    }
+                  } catch (e) {
+                    debugPrint('❌ Gagal ambil harga layanan ($serviceId): $e');
+                    data['price'] = 0;
+                  }
+                } else {
+                  data['price'] = 0;
+                }
+
                 bookingList.add(data);
               }
             }
@@ -69,6 +97,48 @@ class HomeBarberController extends GetxController {
     } finally {
       isLoading.value = false;
     }
+  }
+
+  void updateBookingWithServiceId() async {
+    final bookingsRef = FirebaseFirestore.instance.collection('bookings');
+    final servicesRef = FirebaseFirestore.instance.collection('services');
+
+    final bookingsSnapshot =
+        await bookingsRef.where('serviceId', isEqualTo: null).get();
+
+    for (final doc in bookingsSnapshot.docs) {
+      final bookingData = doc.data();
+      final serviceName = bookingData['serviceName'];
+
+      if (serviceName != null) {
+        try {
+          final serviceQuery =
+              await servicesRef
+                  .where('name', isEqualTo: serviceName)
+                  .limit(1)
+                  .get();
+
+          if (serviceQuery.docs.isNotEmpty) {
+            final matchedServiceDoc = serviceQuery.docs.first;
+            final matchedServiceId = matchedServiceDoc.id;
+
+            await bookingsRef.doc(doc.id).update({
+              'serviceId': matchedServiceId,
+            });
+
+            debugPrint(
+              '✅ Updated booking ${doc.id} with serviceId: $matchedServiceId',
+            );
+          } else {
+            debugPrint('❌ Service not found for name: $serviceName');
+          }
+        } catch (e) {
+          debugPrint('❌ Error updating booking ${doc.id}: $e');
+        }
+      }
+    }
+
+    debugPrint('✅ Proses selesai update booking.');
   }
 
   /// Update status booking (accepted / rejected / selesai)
