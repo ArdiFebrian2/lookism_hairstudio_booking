@@ -49,27 +49,25 @@ class ReportController extends GetxController {
         final data = doc.data() as Map<String, dynamic>;
         data['id'] = doc.id;
 
-        // Ambil info layanan dari serviceId
-        final serviceId = data['serviceId'];
+        final String serviceName = data['serviceName'] ?? '-';
         int servicePrice = 0;
-        String serviceName = '-';
 
-        if (serviceId != null) {
-          final serviceDoc =
+        // Ambil harga berdasarkan nama layanan
+        if (serviceName != '-') {
+          final serviceQuery =
               await FirebaseFirestore.instance
                   .collection('services')
-                  .doc(serviceId)
+                  .where('name', isEqualTo: serviceName)
+                  .limit(1)
                   .get();
 
-          if (serviceDoc.exists) {
-            final serviceData = serviceDoc.data()!;
+          if (serviceQuery.docs.isNotEmpty) {
+            final serviceData = serviceQuery.docs.first.data();
             servicePrice = (serviceData['price'] ?? 0).toInt();
-            serviceName = serviceData['name'] ?? '-';
           }
         }
 
         data['servicePrice'] = servicePrice;
-        data['serviceName'] = serviceName;
         data['totalRevenue'] = (data['totalBookings'] ?? 0) * servicePrice;
 
         tempReports.add(data);
@@ -104,20 +102,36 @@ class ReportController extends GetxController {
 
     pdf.addPage(
       pw.Page(
-        build:
-            (pw.Context context) => pw.Column(
-              crossAxisAlignment: pw.CrossAxisAlignment.start,
-              children: [
-                pw.Text(
-                  'Laporan Pendapatan Umum',
-                  style: pw.TextStyle(fontSize: 20),
-                ),
-                pw.SizedBox(height: 16),
-                pw.Text('Total Booking: $totalBookings'),
-                pw.SizedBox(height: 8),
-                pw.Text('Total Pendapatan: ${currency.format(totalRevenue)}'),
-              ],
-            ),
+        build: (pw.Context context) {
+          return pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              pw.Text(
+                'Laporan Pendapatan Umum',
+                style: pw.TextStyle(fontSize: 20),
+              ),
+              pw.SizedBox(height: 16),
+              pw.Text('Total Booking: $totalBookings'),
+              pw.SizedBox(height: 8),
+              pw.Text('Total Pendapatan: ${currency.format(totalRevenue)}'),
+              pw.SizedBox(height: 20),
+              pw.Text('Detail Per Layanan:', style: pw.TextStyle(fontSize: 16)),
+              pw.SizedBox(height: 10),
+              pw.Table.fromTextArray(
+                headers: ['Layanan', 'Harga', 'Jumlah Booking', 'Pendapatan'],
+                data:
+                    reports.map((item) {
+                      return [
+                        item['serviceName'] ?? '-',
+                        currency.format(item['servicePrice'] ?? 0),
+                        item['totalBookings'].toString(),
+                        currency.format(item['totalRevenue'] ?? 0),
+                      ];
+                    }).toList(),
+              ),
+            ],
+          );
+        },
       ),
     );
 

@@ -1,7 +1,38 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class WelcomeSection extends StatelessWidget {
+class WelcomeSection extends StatefulWidget {
   const WelcomeSection({super.key});
+
+  @override
+  State<WelcomeSection> createState() => _WelcomeSectionState();
+}
+
+class _WelcomeSectionState extends State<WelcomeSection> {
+  String? userName;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchUserData();
+  }
+
+  Future<void> fetchUserData() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final doc =
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .get();
+      if (doc.exists && doc.data()?['role'] == 'customer') {
+        setState(() {
+          userName = doc.data()?['name'] ?? 'Customer';
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -9,11 +40,7 @@ class WelcomeSection extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
-          children: [
-            _buildWelcomeCard(),
-            const SizedBox(height: 16),
-            // _buildQuickStats(),
-          ],
+          children: [_buildWelcomeCard(), const SizedBox(height: 16)],
         ),
       ),
     );
@@ -61,9 +88,9 @@ class WelcomeSection extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Selamat Datang!',
-                      style: TextStyle(
+                    Text(
+                      'Hai, ${userName ?? '...'}!',
+                      style: const TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
                         color: Colors.black87,

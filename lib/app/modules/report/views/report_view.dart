@@ -138,38 +138,76 @@ class ReportView extends StatelessWidget {
                 (sum, item) => sum + ((item['totalBookings'] ?? 0) as int),
               );
 
-              return Padding(
+              return ListView(
                 padding: const EdgeInsets.all(16),
-                child: Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  elevation: 4,
-                  child: Container(
-                    padding: const EdgeInsets.all(24),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Total Booking: $totalBookings',
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
+                children: [
+                  Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    elevation: 4,
+                    child: Container(
+                      padding: const EdgeInsets.all(24),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Total Booking: $totalBookings',
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 12),
-                        Text(
-                          'Total Pendapatan: ${currency.format(totalRevenue)}',
-                          style: const TextStyle(
-                            fontSize: 18,
-                            color: Colors.green,
-                            fontWeight: FontWeight.w700,
+                          const SizedBox(height: 12),
+                          Text(
+                            'Total Pendapatan: ${currency.format(totalRevenue)}',
+                            style: const TextStyle(
+                              fontSize: 18,
+                              color: Colors.green,
+                              fontWeight: FontWeight.w700,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-                ),
+                  // const SizedBox(height: 24),
+                  // const Text(
+                  //   'Rincian per Layanan:',
+                  //   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  // ),
+                  // const SizedBox(height: 12),
+                  // ...controller.reports.map((item) {
+                  //   final name = item['serviceName'] ?? '-';
+                  //   final price = item['servicePrice'] ?? 0;
+                  //   final total = item['totalRevenue'] ?? 0;
+                  //   final bookings = item['totalBookings'] ?? 0;
+
+                  //   return Card(
+                  //     margin: const EdgeInsets.symmetric(vertical: 8),
+                  //     shape: RoundedRectangleBorder(
+                  //       borderRadius: BorderRadius.circular(10),
+                  //     ),
+                  //     child: ListTile(
+                  //       title: Text(name),
+                  //       subtitle: Column(
+                  //         crossAxisAlignment: CrossAxisAlignment.start,
+                  //         children: [
+                  //           Text('Harga Layanan: ${currency.format(price)}'),
+                  //           Text('Jumlah Booking: $bookings'),
+                  //         ],
+                  //       ),
+                  //       trailing: Text(
+                  //         currency.format(total),
+                  //         style: const TextStyle(
+                  //           color: Colors.green,
+                  //           fontWeight: FontWeight.bold,
+                  //         ),
+                  //       ),
+                  //     ),
+                  //   );
+                  // }).toList(),
+                ],
               );
             }),
           ),

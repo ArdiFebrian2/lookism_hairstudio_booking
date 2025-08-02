@@ -58,27 +58,14 @@ class ServiceCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 4),
-                    // Row(
-                    //   children: [
-                    //     Icon(Icons.star, color: Colors.amber, size: 16),
-                    //     const SizedBox(width: 4),
-                    //     const Text(
-                    //       '4.9',
-                    //       style: TextStyle(
-                    //         fontSize: 12,
-                    //         fontWeight: FontWeight.w500,
-                    //       ),
-                    //     ),
-                    //     const SizedBox(width: 8),
-                    //     Text(
-                    //       '(127 ulasan)',
-                    //       style: TextStyle(
-                    //         fontSize: 12,
-                    //         color: Colors.grey[600],
-                    //       ),
-                    //     ),
-                    //   ],
-                    // ),
+                    Text(
+                      'Durasi: ${service.duration} menit',
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -199,7 +186,7 @@ class ServiceCard extends StatelessWidget {
           flex: 2,
           child: ElevatedButton.icon(
             onPressed: onBookPressed,
-            label: const Text('Book Sekarang'),
+            label: const Text('Booking Sekarang'),
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.deepPurple,
               foregroundColor: Colors.white,
