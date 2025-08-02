@@ -6,7 +6,6 @@ import 'package:get/get.dart';
 class HomeBarberController extends GetxController {
   final bookings = <Map<String, dynamic>>[].obs;
   final isLoading = false.obs;
-
   late final String barberId;
 
   @override
@@ -16,10 +15,8 @@ class HomeBarberController extends GetxController {
     fetchBookings();
   }
 
-  /// Mengambil semua data booking berdasarkan barbermanId dan hanya jika user adalah customer
   void fetchBookings() async {
     isLoading.value = true;
-
     try {
       final snapshot =
           await FirebaseFirestore.instance
@@ -28,20 +25,16 @@ class HomeBarberController extends GetxController {
               .orderBy('datetime')
               .get();
 
-      debugPrint('📦 Total Bookings: ${snapshot.docs.length}');
       final List<Map<String, dynamic>> bookingList = [];
 
       for (final doc in snapshot.docs) {
         final data = doc.data();
         data['id'] = doc.id;
 
+        final status = data['status'];
+        if (status == 'selesai' || status == 'rejected') continue;
+
         final String? userId = data['userId'];
-        final String? status = data['status'];
-
-        if (status == 'selesai' || status == 'rejected') {
-          continue; // Lewati booking selesai atau ditolak
-        }
-
         if (userId != null && userId.isNotEmpty) {
           try {
             final userDoc =
@@ -50,39 +43,40 @@ class HomeBarberController extends GetxController {
                     .doc(userId)
                     .get();
 
-            if (userDoc.exists) {
-              final userData = userDoc.data();
-              final bool isCustomer = (userData?['role'] == 'customer');
+            final userData = userDoc.data();
+            final bool isCustomer = userData?['role'] == 'customer';
 
-              if (isCustomer) {
-                data['customerName'] = userData?['name'] ?? 'Tidak diketahui';
-                data['customerEmail'] = userData?['email'] ?? '-';
-                data['customerPhone'] = userData?['phone'] ?? '-';
+            if (isCustomer) {
+              data['customerName'] = userData?['name'] ?? 'Tidak diketahui';
+              data['customerEmail'] = userData?['email'] ?? '-';
+              data['customerPhone'] = userData?['phone'] ?? '-';
 
-                // ✅ Ambil harga dari service
-                final serviceId = data['serviceId'];
-                if (serviceId != null) {
-                  try {
-                    final serviceDoc =
-                        await FirebaseFirestore.instance
-                            .collection('services')
-                            .doc(serviceId)
-                            .get();
+              // ✅ Ambil harga berdasarkan serviceName
+              final String serviceName = data['serviceName'] ?? '';
+              int price = 0;
 
-                    if (serviceDoc.exists) {
-                      final serviceData = serviceDoc.data();
-                      data['price'] = serviceData?['price'] ?? 0;
-                    }
-                  } catch (e) {
-                    debugPrint('❌ Gagal ambil harga layanan ($serviceId): $e');
-                    data['price'] = 0;
+              if (serviceName.isNotEmpty) {
+                final serviceQuery =
+                    await FirebaseFirestore.instance
+                        .collection('services')
+                        .where('name', isEqualTo: serviceName)
+                        .limit(1)
+                        .get();
+
+                if (serviceQuery.docs.isNotEmpty) {
+                  final serviceData = serviceQuery.docs.first.data();
+                  final rawPrice = serviceData['price'];
+
+                  if (rawPrice is int) {
+                    price = rawPrice;
+                  } else if (rawPrice is double) {
+                    price = rawPrice.toInt();
                   }
-                } else {
-                  data['price'] = 0;
                 }
-
-                bookingList.add(data);
               }
+
+              data['price'] = price;
+              bookingList.add(data);
             }
           } catch (e) {
             debugPrint('❌ Gagal ambil data user ($userId): $e');
@@ -99,62 +93,96 @@ class HomeBarberController extends GetxController {
     }
   }
 
-  void updateBookingWithServiceId() async {
-    final bookingsRef = FirebaseFirestore.instance.collection('bookings');
-    final servicesRef = FirebaseFirestore.instance.collection('services');
+  Future<void> updateBookingStatus(String bookingId, String status) async {
+    try {
+      final bookingRef = FirebaseFirestore.instance
+          .collection('bookings')
+          .doc(bookingId);
 
-    final bookingsSnapshot =
-        await bookingsRef.where('serviceId', isEqualTo: null).get();
+      await bookingRef.update({'status': status});
 
-    for (final doc in bookingsSnapshot.docs) {
-      final bookingData = doc.data();
-      final serviceName = bookingData['serviceName'];
+      if (status == 'selesai') {
+        final bookingDoc = await bookingRef.get();
+        final data = bookingDoc.data();
+        if (data == null) throw Exception('Data booking tidak ditemukan');
 
-      if (serviceName != null) {
-        try {
+        final String serviceName = data['serviceName'] ?? '';
+        final String barbermanId = data['barbermanId'] ?? '';
+        final now = DateTime.now();
+        final String month =
+            '${now.year}-${now.month.toString().padLeft(2, '0')}';
+
+        int price = 0;
+
+        // ✅ Ambil harga dari koleksi `services` berdasarkan serviceName
+        if (serviceName.isNotEmpty) {
           final serviceQuery =
-              await servicesRef
+              await FirebaseFirestore.instance
+                  .collection('services')
                   .where('name', isEqualTo: serviceName)
                   .limit(1)
                   .get();
 
           if (serviceQuery.docs.isNotEmpty) {
-            final matchedServiceDoc = serviceQuery.docs.first;
-            final matchedServiceId = matchedServiceDoc.id;
+            final serviceData = serviceQuery.docs.first.data();
+            final rawPrice = serviceData['price'];
 
-            await bookingsRef.doc(doc.id).update({
-              'serviceId': matchedServiceId,
-            });
-
-            debugPrint(
-              '✅ Updated booking ${doc.id} with serviceId: $matchedServiceId',
-            );
-          } else {
-            debugPrint('❌ Service not found for name: $serviceName');
+            if (rawPrice is int) {
+              price = rawPrice;
+            } else if (rawPrice is double) {
+              price = rawPrice.toInt();
+            }
           }
-        } catch (e) {
-          debugPrint('❌ Error updating booking ${doc.id}: $e');
         }
+
+        // ✅ Ambil nama barberman dari koleksi users
+        String barbermanName = 'Barber';
+        if (barbermanId.isNotEmpty) {
+          final userDoc =
+              await FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(barbermanId)
+                  .get();
+
+          final userData = userDoc.data();
+          if (userDoc.exists && userData?['role'] == 'baberman') {
+            barbermanName = userData?['name'] ?? 'Barber';
+          }
+        }
+
+        // ✅ Simpan atau update laporan di koleksi `reports`
+        final reportRef = FirebaseFirestore.instance
+            .collection('reports')
+            .doc('$barbermanId-$month');
+
+        await FirebaseFirestore.instance.runTransaction((transaction) async {
+          final snapshot = await transaction.get(reportRef);
+
+          if (snapshot.exists) {
+            final currentData = snapshot.data()!;
+            transaction.update(reportRef, {
+              'totalRevenue': (currentData['totalRevenue'] ?? 0) + price,
+              'totalBookings': (currentData['totalBookings'] ?? 0) + 1,
+            });
+          } else {
+            transaction.set(reportRef, {
+              'barbermanId': barbermanId,
+              'barbermanName': barbermanName,
+              'month': month,
+              'totalRevenue': price,
+              'totalBookings': 1,
+              'createdAt': now,
+            });
+          }
+        });
       }
-    }
-
-    debugPrint('✅ Proses selesai update booking.');
-  }
-
-  /// Update status booking (accepted / rejected / selesai)
-  Future<void> updateBookingStatus(String bookingId, String status) async {
-    try {
-      await FirebaseFirestore.instance
-          .collection('bookings')
-          .doc(bookingId)
-          .update({'status': status});
 
       Get.snackbar(
         'Berhasil',
         status == 'accepted'
             ? 'Booking diterima'
             : status == 'selesai'
-            ? 'Booking selesai'
+            ? 'Booking selesai dan dicatat ke laporan'
             : 'Status booking diperbarui',
         snackPosition: SnackPosition.TOP,
         backgroundColor:
@@ -166,7 +194,7 @@ class HomeBarberController extends GetxController {
         colorText: Colors.white,
       );
 
-      fetchBookings(); // Refresh data
+      fetchBookings();
     } catch (e) {
       debugPrint('❌ Gagal update status booking: $e');
       Get.snackbar('Error', 'Gagal memperbarui status booking');

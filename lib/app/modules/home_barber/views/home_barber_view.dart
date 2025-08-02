@@ -44,9 +44,10 @@ class HomeBarberView extends StatelessWidget {
 
     return RefreshIndicator(
       onRefresh: () async => controller.fetchBookings(),
-      child: ListView.builder(
+      child: ListView.separated(
         padding: const EdgeInsets.all(16),
         itemCount: controller.bookings.length,
+        separatorBuilder: (_, __) => const SizedBox(height: 12),
         itemBuilder: (context, index) {
           final booking = controller.bookings[index];
           return BookingCard(

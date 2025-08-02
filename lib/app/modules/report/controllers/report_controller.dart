@@ -1,114 +1,128 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
-import 'package:lookism_hairstudio_booking/app/data/models/report_model.dart';
-import 'package:lookism_hairstudio_booking/app/data/services/report_service.dart';
 import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 
 class ReportController extends GetxController {
-  final reportService = ReportService();
+  final reports = <Map<String, dynamic>>[].obs;
+  final isLoading = false.obs;
 
-  var reports = <ReportModel>[].obs;
-  var selectedBarberId = ''.obs;
-  var isLoading = false.obs;
-  var daily = 0.0.obs;
-  var weekly = 0.0.obs;
-  var monthly = 0.0.obs;
-  var selectedStartDate = Rxn<DateTime>();
-  var selectedEndDate = Rxn<DateTime>();
+  String? selectedMonth;
+  int? selectedYear;
+  DateTime? selectedDate;
 
   @override
   void onInit() {
     super.onInit();
-    fetchReportData();
+    fetchReports();
   }
 
-  void fetchReportData() async {
+  void fetchReports({String? month, int? year, DateTime? date}) async {
+    isLoading.value = true;
+
     try {
-      isLoading.value = true;
-      final result = await reportService.fetchReports(
-        barberId: selectedBarberId.value,
-        start: selectedStartDate.value,
-        end: selectedEndDate.value,
-      );
-      reports.value = result;
-      calculateIncomes();
+      Query query = FirebaseFirestore.instance.collection('reports');
+
+      if (date != null) {
+        final start = DateTime(date.year, date.month, date.day);
+        final end = start.add(const Duration(days: 1));
+        query = query
+            .where('createdAt', isGreaterThanOrEqualTo: start)
+            .where('createdAt', isLessThan: end);
+      } else {
+        if (month != null) {
+          query = query.where('month', isEqualTo: month);
+        }
+        if (year != null) {
+          query = query
+              .where('month', isGreaterThanOrEqualTo: '$year-01')
+              .where('month', isLessThanOrEqualTo: '$year-12');
+        }
+      }
+
+      final snapshot = await query.orderBy('month', descending: true).get();
+      List<Map<String, dynamic>> tempReports = [];
+
+      for (var doc in snapshot.docs) {
+        final data = doc.data() as Map<String, dynamic>;
+        data['id'] = doc.id;
+
+        // Ambil info layanan dari serviceId
+        final serviceId = data['serviceId'];
+        int servicePrice = 0;
+        String serviceName = '-';
+
+        if (serviceId != null) {
+          final serviceDoc =
+              await FirebaseFirestore.instance
+                  .collection('services')
+                  .doc(serviceId)
+                  .get();
+
+          if (serviceDoc.exists) {
+            final serviceData = serviceDoc.data()!;
+            servicePrice = (serviceData['price'] ?? 0).toInt();
+            serviceName = serviceData['name'] ?? '-';
+          }
+        }
+
+        data['servicePrice'] = servicePrice;
+        data['serviceName'] = serviceName;
+        data['totalRevenue'] = (data['totalBookings'] ?? 0) * servicePrice;
+
+        tempReports.add(data);
+      }
+
+      reports.value = tempReports;
     } catch (e) {
-      Get.snackbar("Error", "Gagal mengambil data laporan");
+      Get.snackbar('Error', 'Gagal mengambil data laporan: $e');
     } finally {
       isLoading.value = false;
     }
   }
 
-  void createReportFromBooking(DocumentSnapshot bookingDoc) async {
-    final data = bookingDoc.data() as Map<String, dynamic>;
-    await FirebaseFirestore.instance.collection('reports').add({
-      'barberman_id': data['barberman_id'],
-      'barberman_name': data['barberman_name'],
-      'customer_name': data['customer_name'],
-      'service_name': data['service_name'],
-      'service_price': data['service_price'],
-      'booking_date': data['booking_date'],
-      'payment_method': data['payment_method'],
-      'created_at': FieldValue.serverTimestamp(),
-    });
-  }
-
-  void calculateIncomes() {
-    final now = DateTime.now();
-    daily.value = 0;
-    weekly.value = 0;
-    monthly.value = 0;
-
-    for (var report in reports) {
-      if (_isSameDay(report.createdAt, now)) {
-        daily.value += report.amount;
-      }
-      if (_isSameWeek(report.createdAt, now)) {
-        weekly.value += report.amount;
-      }
-      if (_isSameMonth(report.createdAt, now)) {
-        monthly.value += report.amount;
-      }
-    }
-  }
-
-  void exportToPDF() async {
+  Future<void> generatePdf() async {
     final pdf = pw.Document();
+
+    final currency = NumberFormat.currency(
+      locale: 'id_ID',
+      symbol: 'Rp ',
+      decimalDigits: 0,
+    );
+
+    final totalRevenue = reports.fold<int>(
+      0,
+      (sum, item) => sum + ((item['totalRevenue'] ?? 0) as int),
+    );
+
+    final totalBookings = reports.fold<int>(
+      0,
+      (sum, item) => sum + ((item['totalBookings'] ?? 0) as int),
+    );
 
     pdf.addPage(
       pw.Page(
         build:
-            (context) => pw.Column(
+            (pw.Context context) => pw.Column(
               crossAxisAlignment: pw.CrossAxisAlignment.start,
               children: [
-                pw.Text("Laporan Transaksi", style: pw.TextStyle(fontSize: 20)),
-                pw.SizedBox(height: 16),
-                ...reports.map(
-                  (r) => pw.Text(
-                    "${DateFormat('dd-MM-yyyy').format(r.createdAt)} - ${r.barberName} - ${r.serviceName} - Rp ${r.amount.toStringAsFixed(0)}",
-                  ),
+                pw.Text(
+                  'Laporan Pendapatan Umum',
+                  style: pw.TextStyle(fontSize: 20),
                 ),
+                pw.SizedBox(height: 16),
+                pw.Text('Total Booking: $totalBookings'),
+                pw.SizedBox(height: 8),
+                pw.Text('Total Pendapatan: ${currency.format(totalRevenue)}'),
               ],
             ),
       ),
     );
 
-    await Printing.layoutPdf(onLayout: (format) => pdf.save());
+    await Printing.layoutPdf(
+      onLayout: (PdfPageFormat format) async => pdf.save(),
+    );
   }
-
-  bool _isSameDay(DateTime a, DateTime b) =>
-      a.year == b.year && a.month == b.month && a.day == b.day;
-
-  bool _isSameWeek(DateTime date, DateTime reference) {
-    final monday = reference.subtract(Duration(days: reference.weekday - 1));
-    final sunday = monday.add(Duration(days: 6));
-    return date.isAfter(monday.subtract(Duration(seconds: 1))) &&
-        date.isBefore(sunday.add(Duration(days: 1)));
-  }
-
-  bool _isSameMonth(DateTime a, DateTime b) =>
-      a.year == b.year && a.month == b.month;
 }

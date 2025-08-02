@@ -4,6 +4,7 @@ import 'package:lookism_hairstudio_booking/app/modules/home_barber/widgets/booki
 import 'package:lookism_hairstudio_booking/app/modules/home_barber/widgets/booking_info.dart';
 import 'package:lookism_hairstudio_booking/app/modules/home_barber/widgets/booking_status.dart';
 import 'package:lookism_hairstudio_booking/app/modules/home_barber/widgets/booking_utils.dart';
+import 'package:intl/intl.dart';
 
 class BookingCard extends StatelessWidget {
   final Map<String, dynamic> booking;
@@ -119,7 +120,10 @@ class BookingCard extends StatelessWidget {
                         'Telepon',
                         booking['customerPhone'] ?? '-',
                       ),
-                      Text('Harga: Rp ${booking['price']}'),
+                      Text(
+                        'Harga: ${NumberFormat.currency(locale: 'id_ID', symbol: 'Rp ', decimalDigits: 0).format(booking['price'] ?? 0)}',
+                        style: const TextStyle(fontWeight: FontWeight.w600),
+                      ),
                     ],
                   ),
                 ),

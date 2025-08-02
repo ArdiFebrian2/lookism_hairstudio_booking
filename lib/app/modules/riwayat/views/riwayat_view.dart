@@ -87,22 +87,6 @@ class RiwayatView extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 6),
-                    // Row(
-                    //   children: [
-                    //     const Icon(
-                    //       Icons.access_time,
-                    //       color: Colors.deepPurple,
-                    //       size: 18,
-                    //     ),
-                    //     const SizedBox(width: 6),
-                    //     // Text(
-                    //     //   'Pukul ${booking.bookingTime}',
-                    //     //   style: const TextStyle(
-                    //     //     fontSize: 13,
-                    //     //     color: Colors.grey,
-                    //     //   ),
-                    //     // ),
-                    //   ],
                     // ),
                     const SizedBox(height: 6),
                     Row(
