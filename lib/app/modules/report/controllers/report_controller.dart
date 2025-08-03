@@ -52,17 +52,17 @@ class ReportController extends GetxController {
         final String serviceName = data['serviceName'] ?? '-';
         int servicePrice = 0;
 
-        // Ambil harga berdasarkan nama layanan
-        if (serviceName != '-') {
-          final serviceQuery =
+        // Cari harga berdasarkan nama service dari koleksi 'services'
+        if (serviceName.isNotEmpty && serviceName != '-') {
+          final serviceSnap =
               await FirebaseFirestore.instance
                   .collection('services')
                   .where('name', isEqualTo: serviceName)
                   .limit(1)
                   .get();
 
-          if (serviceQuery.docs.isNotEmpty) {
-            final serviceData = serviceQuery.docs.first.data();
+          if (serviceSnap.docs.isNotEmpty) {
+            final serviceData = serviceSnap.docs.first.data();
             servicePrice = (serviceData['price'] ?? 0).toInt();
           }
         }

@@ -10,6 +10,7 @@ class BookingModel {
   final String status;
   final DateTime bookingDate;
   final String barbermanName;
+  final double servicePrice;
 
   BookingModel({
     required this.id,
@@ -21,12 +22,14 @@ class BookingModel {
     required this.status,
     required this.bookingDate,
     this.barbermanName = '',
+    required this.servicePrice,
   });
 
   factory BookingModel.fromMap(
     String id,
     Map<String, dynamic> map, {
     String barbermanName = '',
+    double? priceOverride, // <- perbaikan disini
   }) {
     return BookingModel(
       id: id,
@@ -38,6 +41,7 @@ class BookingModel {
       status: map['status'] ?? '-',
       bookingDate: _parseDate(map['datetime']),
       barbermanName: barbermanName,
+      servicePrice: priceOverride ?? (map['price']?.toDouble() ?? 0.0),
     );
   }
 

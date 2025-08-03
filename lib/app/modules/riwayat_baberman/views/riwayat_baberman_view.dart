@@ -18,28 +18,33 @@ class RiwayatBabermanView extends StatelessWidget {
         backgroundColor: Colors.green,
       ),
       body: Obx(() {
-        final bookings = controller.completedBookings;
-
-        if (bookings.isEmpty) {
-          return const Center(
-            child: Text(
-              'Belum ada booking yang selesai.',
-              style: TextStyle(fontSize: 16),
-            ),
-          );
+        if (controller.isLoading.value) {
+          return const Center(child: CircularProgressIndicator());
         }
 
-        return ListView.builder(
-          padding: const EdgeInsets.all(16),
-          itemCount: bookings.length,
-          itemBuilder: (context, index) {
-            final booking = bookings[index];
+        final bookings = controller.completedBookings;
 
-            return BookingCard(
-              booking: booking,
-              onComplete: null, // ✅ Sudah selesai
-            );
+        return RefreshIndicator(
+          onRefresh: () async {
+            controller.fetchCompletedBookings();
           },
+          child:
+              bookings.isEmpty
+                  ? ListView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    children: const [
+                      SizedBox(height: 200),
+                      Center(child: CircularProgressIndicator()),
+                    ],
+                  )
+                  : ListView.builder(
+                    padding: const EdgeInsets.all(16),
+                    itemCount: bookings.length,
+                    itemBuilder: (context, index) {
+                      final booking = bookings[index];
+                      return BookingCard(booking: booking, onComplete: null);
+                    },
+                  ),
         );
       }),
     );

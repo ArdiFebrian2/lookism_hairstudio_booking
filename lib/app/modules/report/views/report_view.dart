@@ -171,42 +171,27 @@ class ReportView extends StatelessWidget {
                       ),
                     ),
                   ),
-                  // const SizedBox(height: 24),
-                  // const Text(
-                  //   'Rincian per Layanan:',
-                  //   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  // ),
-                  // const SizedBox(height: 12),
-                  // ...controller.reports.map((item) {
-                  //   final name = item['serviceName'] ?? '-';
-                  //   final price = item['servicePrice'] ?? 0;
-                  //   final total = item['totalRevenue'] ?? 0;
-                  //   final bookings = item['totalBookings'] ?? 0;
-
-                  //   return Card(
-                  //     margin: const EdgeInsets.symmetric(vertical: 8),
-                  //     shape: RoundedRectangleBorder(
-                  //       borderRadius: BorderRadius.circular(10),
-                  //     ),
-                  //     child: ListTile(
-                  //       title: Text(name),
-                  //       subtitle: Column(
-                  //         crossAxisAlignment: CrossAxisAlignment.start,
-                  //         children: [
-                  //           Text('Harga Layanan: ${currency.format(price)}'),
-                  //           Text('Jumlah Booking: $bookings'),
-                  //         ],
-                  //       ),
-                  //       trailing: Text(
-                  //         currency.format(total),
-                  //         style: const TextStyle(
-                  //           color: Colors.green,
-                  //           fontWeight: FontWeight.bold,
-                  //         ),
-                  //       ),
-                  //     ),
-                  //   );
-                  // }).toList(),
+                  const SizedBox(height: 16),
+                  const Text(
+                    'Detail Per Layanan:',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  ),
+                  const SizedBox(height: 8),
+                  ...controller.reports.map((item) {
+                    return Card(
+                      margin: const EdgeInsets.symmetric(vertical: 6),
+                      child: ListTile(
+                        title: Text(item['serviceName'] ?? '-'),
+                        subtitle: Text(
+                          'Booking: ${item['totalBookings']} • Pendapatan: ${currency.format(item['totalRevenue'])}',
+                        ),
+                        trailing: Text(
+                          currency.format(item['servicePrice'] ?? 0),
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    );
+                  }).toList(),
                 ],
               );
             }),

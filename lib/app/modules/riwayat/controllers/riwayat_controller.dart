@@ -36,8 +36,10 @@ class RiwayatController extends GetxController {
         snapshot.docs.map((doc) async {
           final data = doc.data();
           final barbermanId = data['barbermanId'];
+          final serviceName = data['serviceName'];
 
           String barbermanName = '';
+          double servicePrice = 0;
 
           if (barbermanId != null && barbermanId != '') {
             final barberDoc =
@@ -48,10 +50,26 @@ class RiwayatController extends GetxController {
             }
           }
 
+          // Ambil harga dari koleksi 'services' berdasarkan nama
+          if (serviceName != null && serviceName != '') {
+            final serviceQuery =
+                await _firestore
+                    .collection('services')
+                    .where('name', isEqualTo: serviceName)
+                    .limit(1)
+                    .get();
+
+            if (serviceQuery.docs.isNotEmpty) {
+              final serviceData = serviceQuery.docs.first.data();
+              servicePrice = (serviceData['price'] ?? 0).toDouble();
+            }
+          }
+
           return BookingModel.fromMap(
             doc.id,
             data,
             barbermanName: barbermanName,
+            priceOverride: servicePrice, // ✅ perbaikan di sini
           );
         }).toList(),
       );

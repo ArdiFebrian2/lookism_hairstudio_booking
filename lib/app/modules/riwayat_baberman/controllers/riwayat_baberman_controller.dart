@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 
 class RiwayatBabermanController extends GetxController {
   var completedBookings = [].obs;
+  var isLoading = false.obs;
 
   @override
   void onInit() {
@@ -26,6 +27,7 @@ class RiwayatBabermanController extends GetxController {
         data['id'] = doc.id;
 
         final String? userId = data['userId'];
+        final String? serviceName = data['serviceName'];
 
         if (userId != null && userId.isNotEmpty) {
           try {
@@ -44,9 +46,23 @@ class RiwayatBabermanController extends GetxController {
                 data['customerEmail'] = userData?['email'] ?? '-';
                 data['customerPhone'] = userData?['phone'] ?? '-';
 
-                bookingList.add(
-                  data,
-                ); // ✅ Tambahkan hanya jika sudah dilengkapi
+                // 🔽 Ambil harga dari serviceName
+                if (serviceName != null && serviceName.isNotEmpty) {
+                  final serviceSnapshot =
+                      await FirebaseFirestore.instance
+                          .collection('services')
+                          .where('name', isEqualTo: serviceName)
+                          .limit(1)
+                          .get();
+
+                  if (serviceSnapshot.docs.isNotEmpty) {
+                    data['price'] = serviceSnapshot.docs.first['price'];
+                  } else {
+                    data['price'] = 0; // atau default value
+                  }
+                }
+
+                bookingList.add(data);
               }
             }
           } catch (e) {
@@ -55,7 +71,7 @@ class RiwayatBabermanController extends GetxController {
         }
       }
 
-      completedBookings.value = bookingList; // ✅ Gunakan hasil enriched
+      completedBookings.value = bookingList;
     } catch (e) {
       print("Error fetching completed bookings: $e");
     }

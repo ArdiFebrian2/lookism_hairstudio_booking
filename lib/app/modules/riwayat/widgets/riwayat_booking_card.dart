@@ -85,10 +85,6 @@ class RiwayatBookingCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 2),
-              // Text(
-              //   'Booking #${(index + 1).toString().padLeft(3, '0')}',
-              //   style: TextStyle(fontSize: 12, color: Colors.grey[500]),
-              // ),
             ],
           ),
         ),
@@ -105,14 +101,32 @@ class RiwayatBookingCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: const Color(0xFFE2E8F0), width: 1),
       ),
-      child: Row(
+      child: Column(
         children: [
-          _buildInfoItem(
-            Icons.person_outline,
-            'Barberman',
-            booking.barbermanName.isNotEmpty
-                ? booking.barbermanName
-                : 'Belum ditentukan',
+          Row(
+            children: [
+              _buildInfoItem(
+                Icons.person_outline,
+                'Barberman',
+                booking.barbermanName.isNotEmpty
+                    ? booking.barbermanName
+                    : 'Belum ditentukan',
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              _buildInfoItem(
+                Icons.attach_money_rounded,
+                'Harga',
+                NumberFormat.currency(
+                  locale: 'id_ID',
+                  symbol: 'Rp ',
+                  decimalDigits: 0,
+                ).format(booking.servicePrice),
+              ),
+            ],
           ),
         ],
       ),
@@ -145,7 +159,7 @@ class RiwayatBookingCard extends StatelessWidget {
     return Expanded(
       child: Row(
         children: [
-          Icon(icon, size: 16, color: const Color(0xFF6366F1)),
+          // Icon(icon, size: 16, color: const Color(0xFF6366F1)),
           const SizedBox(width: 8),
           Expanded(
             child: Column(
@@ -199,74 +213,8 @@ class RiwayatBookingCard extends StatelessWidget {
     );
   }
 
-  // Widget _buildActionButtons(BuildContext context) {
-  //   return Row(
-  //     children: [
-  //       if (booking.status.toLowerCase() == 'pending') ...[
-  //         Expanded(
-  //           child: OutlinedButton(
-  //             onPressed: () => _cancelBooking(),
-  //             style: OutlinedButton.styleFrom(
-  //               side: const BorderSide(color: Color(0xFFEF4444)),
-  //               foregroundColor: const Color(0xFFEF4444),
-  //               shape: RoundedRectangleBorder(
-  //                 borderRadius: BorderRadius.circular(8),
-  //               ),
-  //               padding: const EdgeInsets.symmetric(vertical: 8),
-  //             ),
-  //             child: const Text(
-  //               'Batalkan',
-  //               style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
-  //             ),
-  //           ),
-  //         ),
-  //         const SizedBox(width: 12),
-  //       ],
-  //       // Expanded(
-  //       //   child: ElevatedButton(
-  //       //     onPressed: () => _showBookingDetail(context),
-  //       //     style: ElevatedButton.styleFrom(
-  //       //       backgroundColor: const Color(0xFF6366F1),
-  //       //       foregroundColor: Colors.white,
-  //       //       shape: RoundedRectangleBorder(
-  //       //         borderRadius: BorderRadius.circular(8),
-  //       //       ),
-  //       //       padding: const EdgeInsets.symmetric(vertical: 8),
-  //       //       elevation: 0,
-  //       //     ),
-  //       //     child: const Text(
-  //       //       'Detail',
-  //       //       style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
-  //       //     ),
-  //       //   ),
-  //       // ),
-  //     ],
-  //   );
-  // }
-
   bool _shouldShowActions() {
     final status = booking.status.toLowerCase();
     return status == 'pending' || status == 'accepted' || status == 'selesai';
   }
-
-  // void _showBookingDetail(BuildContext context) {
-  //   // Navigate to booking detail page
-  //   // Get.to(() => BookingDetailView(booking: booking));
-
-  //   // For now, show a snackbar
-  //   ScaffoldMessenger.of(context).showSnackBar(
-  //     SnackBar(
-  //       content: Text('Detail booking ${booking.serviceName}'),
-  //       backgroundColor: const Color(0xFF6366F1),
-  //       behavior: SnackBarBehavior.floating,
-  //       margin: const EdgeInsets.all(16),
-  //       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-  //     ),
-  //   );
-  // }
-
-  // void _cancelBooking() {
-  //   // Implement cancel booking logic
-  //   // controller.cancelBooking(booking.id);
-  // }
 }
