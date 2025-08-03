@@ -16,6 +16,9 @@ class HomeCustomerController extends GetxController {
 
   late final String userId;
 
+  /// ✅ NEW: simpan jadwal tersedia
+  final availableSchedules = <Map<String, dynamic>>[].obs;
+
   @override
   void onInit() {
     super.onInit();
@@ -36,7 +39,7 @@ class HomeCustomerController extends GetxController {
     final snapshot =
         await FirebaseFirestore.instance
             .collection('users')
-            .where('role', isEqualTo: 'baberman') // pastikan penulisan benar
+            .where('role', isEqualTo: 'baberman')
             .get();
     return snapshot.docs;
   }
@@ -46,6 +49,7 @@ class HomeCustomerController extends GetxController {
     selectedDate.value = null;
     selectedTime.value = null;
     isSubmitting.value = false;
+    availableSchedules.clear();
   }
 
   void showBookingDialog(BuildContext context, ServiceModel service) {
@@ -65,30 +69,23 @@ class HomeCustomerController extends GetxController {
       initialDate: DateTime.now(),
       firstDate: DateTime.now(),
       lastDate: DateTime.now().add(const Duration(days: 30)),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(primary: Colors.deepPurple),
-          ),
-          child: child!,
-        );
-      },
     );
-    if (picked != null) selectedDate.value = picked;
+    if (picked != null) {
+      selectedDate.value = picked;
+
+      // ✅ Fetch jadwal setelah pilih tanggal
+      if (selectedBarberman.value != null) {
+        final formattedDate =
+            "${picked.year.toString().padLeft(4, '0')}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}";
+        await fetchAvailableSchedules(selectedBarberman.value!, formattedDate);
+      }
+    }
   }
 
   Future<void> selectTime(BuildContext context) async {
     final picked = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.now(),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(primary: Colors.deepPurple),
-          ),
-          child: child!,
-        );
-      },
     );
 
     if (picked != null) {
@@ -117,7 +114,25 @@ class HomeCustomerController extends GetxController {
         selectedTime.value != null;
   }
 
-  /// Cek apakah barberman memiliki booking lain di waktu yang sama (jam dan menit persis)
+  /// ✅ Ambil jadwal tersedia (belum dibooking)
+  Future<void> fetchAvailableSchedules(String barbermanId, String date) async {
+    try {
+      final snapshot =
+          await FirebaseFirestore.instance
+              .collection('schedules')
+              .where('barberId', isEqualTo: barbermanId)
+              .where('date', isEqualTo: date)
+              .where('isBooked', isEqualTo: false)
+              .orderBy('startTime')
+              .get();
+
+      availableSchedules.value =
+          snapshot.docs.map((doc) => {"id": doc.id, ...doc.data()}).toList();
+    } catch (e) {
+      Get.snackbar("Gagal", "Gagal memuat jadwal: $e");
+    }
+  }
+
   Future<bool> isScheduleAvailable(
     String barbermanId,
     DateTime bookingDateTime,
@@ -132,6 +147,7 @@ class HomeCustomerController extends GetxController {
     return snapshot.docs.isEmpty;
   }
 
+  /// ✅ Submit booking jika jadwal tersedia & belum dibooking
   Future<void> submitBooking(ServiceModel service) async {
     if (!validateBookingForm()) {
       Get.snackbar(
@@ -155,15 +171,20 @@ class HomeCustomerController extends GetxController {
         selectedTime.value!.minute,
       );
 
-      final isAvailable = await isScheduleAvailable(
-        selectedBarberman.value!,
-        bookingDateTime,
+      final dateStr =
+          "${selectedDate.value!.year.toString().padLeft(4, '0')}-${selectedDate.value!.month.toString().padLeft(2, '0')}-${selectedDate.value!.day.toString().padLeft(2, '0')}";
+      final timeStr =
+          "${selectedTime.value!.hour.toString().padLeft(2, '0')}:${selectedTime.value!.minute.toString().padLeft(2, '0')}";
+
+      // ✅ Cek apakah waktu dipilih ada di availableSchedules
+      final selectedSchedule = availableSchedules.firstWhereOrNull(
+        (s) => s['date'] == dateStr && s['startTime'] == timeStr,
       );
 
-      if (!isAvailable) {
+      if (selectedSchedule == null) {
         Get.snackbar(
-          'Jadwal penuh',
-          'Barberman telah memiliki booking di jam tersebut. Silakan pilih waktu lain.',
+          'Jadwal Baberman tidak tersedia',
+          'Pilih Baberman lain dan waktu yang tersedia',
           backgroundColor: Colors.orange,
           colorText: Colors.white,
           snackPosition: SnackPosition.TOP,
@@ -171,9 +192,26 @@ class HomeCustomerController extends GetxController {
         return;
       }
 
+      // ✅ Cek ulang apakah belum dibooking (ganda)
+      final isAvailable = await isScheduleAvailable(
+        selectedBarberman.value!,
+        bookingDateTime,
+      );
+
+      if (!isAvailable) {
+        Get.snackbar(
+          'Jadwal sudah dibooking',
+          'Waktu ini telah diambil. Pilih jadwal lain.',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          snackPosition: SnackPosition.TOP,
+        );
+        return;
+      }
+
+      // ✅ Tambahkan ke bookings
       await FirebaseFirestore.instance.collection('bookings').add({
         'userId': userId,
-        // 'serviceId': service.id,
         'serviceName': service.name,
         'barbermanId': selectedBarberman.value,
         'datetime': bookingDateTime.toIso8601String(),
@@ -181,10 +219,16 @@ class HomeCustomerController extends GetxController {
         'createdAt': DateTime.now().toIso8601String(),
       });
 
-      Get.back(); // Close the bottom sheet
+      // ✅ Tandai jadwal sebagai isBooked: true
+      await FirebaseFirestore.instance
+          .collection('schedules')
+          .doc(selectedSchedule['id'])
+          .update({'isBooked': true});
+
+      Get.back(); // Close bottom sheet
       Get.snackbar(
         'Berhasil! 🎉',
-        'Booking berhasil dibuat. Menunggu konfirmasi.',
+        'Booking berhasil dibuat.',
         backgroundColor: Colors.green,
         colorText: Colors.white,
         snackPosition: SnackPosition.TOP,
@@ -194,7 +238,7 @@ class HomeCustomerController extends GetxController {
     } catch (e) {
       Get.snackbar(
         'Error',
-        'Terjadi kesalahan. Silakan coba lagi.',
+        'Terjadi kesalahan: $e',
         backgroundColor: Colors.red,
         colorText: Colors.white,
         snackPosition: SnackPosition.TOP,

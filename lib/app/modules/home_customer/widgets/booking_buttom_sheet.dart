@@ -278,17 +278,26 @@ class BookingBottomSheet extends GetView<HomeCustomerController> {
                                       fontWeight: FontWeight.w500,
                                     ),
                                   ),
-                                  Row(children: [
-                                     
-                                    ],
-                                  ),
                                 ],
                               ),
                             ],
                           ),
                         );
                       }).toList(),
-                  onChanged: (val) => controller.selectedBarberman.value = val,
+                  onChanged: (val) async {
+                    controller.selectedBarberman.value = val;
+
+                    // Ambil jadwal hanya jika tanggal juga sudah dipilih
+                    if (controller.selectedDate.value != null && val != null) {
+                      final date = controller.selectedDate.value!;
+                      final formattedDate =
+                          '${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+                      await controller.fetchAvailableSchedules(
+                        val,
+                        formattedDate,
+                      );
+                    }
+                  },
                   decoration: const InputDecoration(
                     hintText: 'Pilih barberman favorit Anda',
                     border: InputBorder.none,

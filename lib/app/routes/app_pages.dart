@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:lookism_hairstudio_booking/app/modules/schedules/controllers/schedules_controller.dart';
 
 import '../modules/admin_notifikasi/bindings/admin_notifikasi_binding.dart';
 import '../modules/admin_notifikasi/views/admin_notifikasi_view.dart';
@@ -48,6 +49,8 @@ import '../modules/riwayat/bindings/riwayat_binding.dart';
 import '../modules/riwayat/views/riwayat_view.dart';
 import '../modules/riwayat_baberman/bindings/riwayat_baberman_binding.dart';
 import '../modules/riwayat_baberman/views/riwayat_baberman_view.dart';
+import '../modules/schedules/bindings/schedules_binding.dart';
+import '../modules/schedules/views/schedules_view.dart';
 import '../modules/service/bindings/service_binding.dart';
 import '../modules/service/views/service_view.dart';
 import '../modules/splashscreen/bindings/splashscreen_binding.dart';
@@ -190,6 +193,14 @@ class AppPages {
       name: _Paths.RIWAYAT_BABERMAN,
       page: () => RiwayatBabermanView(),
       binding: RiwayatBabermanBinding(),
+    ),
+    GetPage(
+      name: '/schedules',
+      page:
+          () => SchedulesView(barberId: 'uid_barberman'), // inject sesuai login
+      binding: BindingsBuilder(() {
+        Get.put(SchedulesController());
+      }),
     ),
   ];
 }

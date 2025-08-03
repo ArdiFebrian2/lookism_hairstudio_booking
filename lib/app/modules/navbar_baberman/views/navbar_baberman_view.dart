@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:lookism_hairstudio_booking/app/modules/home_barber/views/home_barber_view.dart';
 import 'package:lookism_hairstudio_booking/app/modules/profile_baberman/views/profile_baberman_view.dart';
 import 'package:lookism_hairstudio_booking/app/modules/riwayat_baberman/views/riwayat_baberman_view.dart';
+import 'package:lookism_hairstudio_booking/app/modules/schedules/views/schedules_view.dart';
 import '../controllers/navbar_baberman_controller.dart';
 
 class NavbarBabermanView extends GetView<NavbarBabermanController> {
@@ -12,7 +13,8 @@ class NavbarBabermanView extends GetView<NavbarBabermanController> {
   Widget build(BuildContext context) {
     final List<Widget> pages = [
       const HomeBarberView(), // index 0
-      RiwayatBabermanView(), // index 1
+      RiwayatBabermanView(),
+      SchedulesView(barberId: controller.barberId), // index 1
       const ProfileBabermanView(), // index 2
     ];
 
@@ -51,6 +53,10 @@ class NavbarBabermanView extends GetView<NavbarBabermanController> {
               BottomNavigationBarItem(
                 icon: Icon(Icons.history),
                 label: 'Riwayat',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.calendar_today),
+                label: 'Jadwal',
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.person_2),

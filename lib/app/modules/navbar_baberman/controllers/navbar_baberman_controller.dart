@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 
 class NavbarBabermanController extends GetxController {
@@ -8,4 +9,6 @@ class NavbarBabermanController extends GetxController {
   void changeTab(int index) {
     currentIndex.value = index;
   }
+
+  String get barberId => FirebaseAuth.instance.currentUser?.uid ?? '';
 }
