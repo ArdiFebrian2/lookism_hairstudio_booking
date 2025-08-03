@@ -53,7 +53,7 @@ class ReportListItem extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
-                        color: Colors.teal.shade600,
+                        color: Colors.deepPurpleAccent,
                       ),
                     ),
                   ),
@@ -95,7 +95,7 @@ class ReportListItem extends StatelessWidget {
                           Icon(
                             Icons.payments_outlined,
                             size: 16,
-                            color: Colors.green.shade600,
+                            color: Colors.deepPurpleAccent,
                           ),
                           const SizedBox(width: 4),
                           Text(

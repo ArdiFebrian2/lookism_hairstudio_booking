@@ -50,7 +50,7 @@ class EmptyState extends StatelessWidget {
             icon: const Icon(Icons.refresh, size: 18),
             label: const Text('Muat Ulang'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.teal.shade400,
+              backgroundColor: Colors.deepPurpleAccent,
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               shape: RoundedRectangleBorder(

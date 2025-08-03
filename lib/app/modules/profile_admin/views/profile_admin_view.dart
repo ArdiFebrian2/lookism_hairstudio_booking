@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/profile_admin_controller.dart';
+import '../widgets/profile_header_widget.dart';
+import '../widgets/profile_info_card_widget.dart';
+import '../widgets/admin_actions_widget.dart';
+import '../widgets/logout_button_widget.dart';
 
 class ProfileAdminView extends GetView<ProfileAdminController> {
   const ProfileAdminView({super.key});
@@ -10,75 +14,49 @@ class ProfileAdminView extends GetView<ProfileAdminController> {
     Get.lazyPut(() => ProfileAdminController());
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Profil Admin'),
-        centerTitle: true,
-        backgroundColor: Colors.indigo,
-        foregroundColor: Colors.white,
-        elevation: 0,
-      ),
+      backgroundColor: Colors.grey[50],
+      appBar: _buildAppBar(),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            children: [
-              const SizedBox(height: 30),
+        child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const SizedBox(height: 20),
+                const ProfileHeaderWidget(),
+                const SizedBox(height: 30),
+                const ProfileInfoCardWidget(),
+                const SizedBox(height: 25),
+                // const AdminActionsWidget(),
+                const SizedBox(height: 40),
+                LogoutButtonWidget(onPressed: controller.logout),
+                const SizedBox(height: 10),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 
-              // Avatar dan info admin
-              Column(
-                children: [
-                  const CircleAvatar(
-                    radius: 50,
-                    backgroundColor: Colors.indigo,
-                    child: Icon(
-                      Icons.admin_panel_settings,
-                      size: 50,
-                      color: Colors.white,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  Obx(
-                    () => Text(
-                      controller.adminName.value,
-                      style: const TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black87,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  const Text(
-                    'Administrator Sistem',
-                    style: TextStyle(fontSize: 16, color: Colors.black54),
-                  ),
-                ],
-              ),
-
-              const Spacer(),
-
-              // Tombol logout
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton.icon(
-                  onPressed: controller.logout,
-                  icon: const Icon(Icons.logout),
-                  label: const Text('Logout'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.redAccent,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    textStyle: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-            ],
+  PreferredSizeWidget _buildAppBar() {
+    return AppBar(
+      title: const Text(
+        'Profil Administrator',
+        style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
+      ),
+      centerTitle: true,
+      backgroundColor: const Color(0xFF3F51B5),
+      foregroundColor: Colors.white,
+      elevation: 0,
+      flexibleSpace: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Color(0xFF3F51B5), Color(0xFF5C6BC0)],
           ),
         ),
       ),

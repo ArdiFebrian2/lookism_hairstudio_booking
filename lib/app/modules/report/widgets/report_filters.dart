@@ -111,17 +111,17 @@ class ReportFilters extends StatelessWidget {
                 'dd MMMM yyyy',
                 'id_ID',
               ).format(controller.selectedDate!)
-              : 'Pilih Tanggal Spesifik',
+              : 'Pilih Tanggal',
           style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
         ),
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.teal.shade50,
-          foregroundColor: Colors.teal.shade700,
+          foregroundColor: Colors.deepPurpleAccent,
           elevation: 0,
           padding: const EdgeInsets.symmetric(vertical: 16),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
-            side: BorderSide(color: Colors.teal.shade200),
+            side: BorderSide(color: Colors.deepPurple),
           ),
         ),
         onPressed: () async {
@@ -134,7 +134,7 @@ class ReportFilters extends StatelessWidget {
               return Theme(
                 data: Theme.of(context).copyWith(
                   colorScheme: ColorScheme.light(
-                    primary: Colors.teal.shade600,
+                    primary: Colors.deepPurpleAccent,
                     onPrimary: Colors.white,
                     surface: Colors.white,
                     onSurface: Colors.black87,
@@ -173,7 +173,7 @@ class ReportFilters extends StatelessWidget {
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: Colors.teal.shade400, width: 2),
+        borderSide: BorderSide(color: Colors.deepPurpleAccent, width: 2),
       ),
       filled: true,
       fillColor: Colors.grey.shade50,

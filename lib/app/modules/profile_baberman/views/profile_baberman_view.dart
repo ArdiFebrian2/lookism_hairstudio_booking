@@ -1,7 +1,10 @@
-import 'package:firebase_auth/firebase_auth.dart';
+// lib/app/modules/profile_baberman/views/profile_baberman_view.dart
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/profile_baberman_controller.dart';
+import '../widgets/profile_header.dart';
+import '../widgets/profile_info_section.dart';
+import '../widgets/profile_logout_button.dart';
 
 class ProfileBabermanView extends GetView<ProfileBabermanController> {
   const ProfileBabermanView({super.key});
@@ -9,101 +12,83 @@ class ProfileBabermanView extends GetView<ProfileBabermanController> {
   @override
   Widget build(BuildContext context) {
     Get.lazyPut(() => ProfileBabermanController());
+
     return Scaffold(
-      backgroundColor: Colors.grey[100],
-      appBar: AppBar(
-        title: const Text('Profil Baberman'),
-        centerTitle: true,
-        backgroundColor: Colors.deepPurple,
-        elevation: 0,
-      ),
-      body: Obx(() {
-        if (controller.isLoading.value) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        final user = controller.userData;
-        if (user.isEmpty) {
-          return const Center(child: Text("Data pengguna tidak ditemukan."));
-        }
-        return SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            children: [
-              // Avatar + Nama
-              Column(
-                children: [
-                  const CircleAvatar(
-                    radius: 48,
-                    backgroundColor: Colors.deepPurple,
-                    child: Icon(Icons.person, size: 48, color: Colors.white),
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    user["nama"] ?? "-",
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.deepPurple,
-                    ),
-                  ),
-                  Text(
-                    user["role"]?.toString().toUpperCase() ?? "-",
-                    style: const TextStyle(fontSize: 14, color: Colors.grey),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 24),
-
-              // Informasi User
-              _infoCard(Icons.email, "Email", user["email"]),
-              _infoCard(Icons.phone_android, "Nomor HP", user["telepon"]),
-              _infoCard(Icons.person, "Role", user["role"]),
-
-              const SizedBox(height: 32),
-
-              // Tombol Logout
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton.icon(
-                  icon: const Icon(Icons.logout),
-                  label: const Text(
-                    "Logout",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.deepPurple,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    textStyle: const TextStyle(fontSize: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  onPressed: () async {
-                    await FirebaseAuth.instance.signOut();
-                    Get.offAllNamed('/login');
-                  },
-                ),
-              ),
-            ],
-          ),
-        );
-      }),
+      backgroundColor: const Color(0xFFF8F9FA),
+      appBar: _buildAppBar(),
+      body: Obx(() => _buildBody()),
     );
   }
 
-  Widget _infoCard(IconData icon, String label, String? value) {
-    return Card(
-      elevation: 3,
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: ListTile(
-        leading: Icon(icon, color: Colors.deepPurple),
-        title: Text(
-          label,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+  PreferredSizeWidget _buildAppBar() {
+    return AppBar(
+      title: const Text(
+        'Profil Baberman',
+        style: TextStyle(fontWeight: FontWeight.w600, color: Colors.white),
+      ),
+      centerTitle: true,
+      backgroundColor: const Color(0xFF6366F1),
+      elevation: 0,
+      flexibleSpace: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
+          ),
         ),
-        subtitle: Text(value ?? "-", style: const TextStyle(fontSize: 16)),
+      ),
+    );
+  }
+
+  Widget _buildBody() {
+    if (controller.isLoading.value) {
+      return const Center(
+        child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF6366F1)),
+        ),
+      );
+    }
+
+    final user = controller.userData;
+    if (user.isEmpty) {
+      return _buildEmptyState();
+    }
+
+    return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
+      child: Column(
+        children: [
+          ProfileHeader(userData: user),
+          ProfileInfoSection(userData: user),
+          const ProfileLogoutButton(),
+          const SizedBox(height: 24),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.person_off_outlined, size: 80, color: Colors.grey[400]),
+          const SizedBox(height: 16),
+          Text(
+            "Data pengguna tidak ditemukan",
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.grey[600],
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            "Silakan coba lagi nanti",
+            style: TextStyle(fontSize: 14, color: Colors.grey[500]),
+          ),
+        ],
       ),
     );
   }

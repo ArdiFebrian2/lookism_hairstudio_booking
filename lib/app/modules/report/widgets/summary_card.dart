@@ -24,14 +24,14 @@ class SummaryCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 8),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [Colors.teal.shade400, Colors.teal.shade600],
+          colors: [Colors.deepPurpleAccent, Colors.deepPurple],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.teal.withOpacity(0.3),
+            color: Colors.deepPurpleAccent,
             blurRadius: 15,
             offset: const Offset(0, 5),
           ),

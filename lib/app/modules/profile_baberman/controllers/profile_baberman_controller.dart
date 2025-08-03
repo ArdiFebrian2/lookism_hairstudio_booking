@@ -7,7 +7,7 @@ class ProfileBabermanController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   var isLoading = true.obs;
-  var userData = {}.obs;
+  var userData = <String, dynamic>{}.obs;
 
   @override
   void onInit() {

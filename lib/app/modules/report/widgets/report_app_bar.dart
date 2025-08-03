@@ -13,14 +13,14 @@ class ReportAppBar extends StatelessWidget implements PreferredSizeWidget {
         'Laporan Pendapatan',
         style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
       ),
-      backgroundColor: Colors.teal.shade600,
+      backgroundColor: Colors.deepPurpleAccent,
       foregroundColor: Colors.white,
       centerTitle: true,
       elevation: 0,
       flexibleSpace: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Colors.teal.shade600, Colors.teal.shade400],
+            colors: [Colors.deepPurpleAccent, Colors.purpleAccent],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
