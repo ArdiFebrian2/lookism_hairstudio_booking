@@ -35,7 +35,7 @@ class AdminMenuGrid extends StatelessWidget {
           _buildMenuTile(
             icon: Icons.person_rounded,
             title: "Kelola Baberman",
-            subtitle: "Tambah, ubah, hapus data baberman dan jadwal",
+            subtitle: "Tambah, ubah, hapus data baberman",
             gradient: [Colors.green[400]!, Colors.green[600]!],
             iconBg: Colors.green[50]!,
             onTap: () {
