@@ -48,28 +48,6 @@ class ReportController extends GetxController {
       for (var doc in snapshot.docs) {
         final data = doc.data() as Map<String, dynamic>;
         data['id'] = doc.id;
-
-        final String serviceName = data['serviceName'] ?? '-';
-        int servicePrice = 0;
-
-        // Cari harga berdasarkan nama service dari koleksi 'services'
-        if (serviceName.isNotEmpty && serviceName != '-') {
-          final serviceSnap =
-              await FirebaseFirestore.instance
-                  .collection('services')
-                  .where('name', isEqualTo: serviceName)
-                  .limit(1)
-                  .get();
-
-          if (serviceSnap.docs.isNotEmpty) {
-            final serviceData = serviceSnap.docs.first.data();
-            servicePrice = (serviceData['price'] ?? 0).toInt();
-          }
-        }
-
-        data['servicePrice'] = servicePrice;
-        data['totalRevenue'] = (data['totalBookings'] ?? 0) * servicePrice;
-
         tempReports.add(data);
       }
 
@@ -83,7 +61,6 @@ class ReportController extends GetxController {
 
   Future<void> generatePdf() async {
     final pdf = pw.Document();
-
     final currency = NumberFormat.currency(
       locale: 'id_ID',
       symbol: 'Rp ',
@@ -115,15 +92,14 @@ class ReportController extends GetxController {
               pw.SizedBox(height: 8),
               pw.Text('Total Pendapatan: ${currency.format(totalRevenue)}'),
               pw.SizedBox(height: 20),
-              pw.Text('Detail Per Layanan:', style: pw.TextStyle(fontSize: 16)),
+              pw.Text('Detail Laporan:', style: pw.TextStyle(fontSize: 16)),
               pw.SizedBox(height: 10),
               pw.Table.fromTextArray(
-                headers: ['Layanan', 'Harga', 'Jumlah Booking', 'Pendapatan'],
+                headers: ['Bulan', 'Total Booking', 'Total Pendapatan'],
                 data:
                     reports.map((item) {
                       return [
-                        item['serviceName'] ?? '-',
-                        currency.format(item['servicePrice'] ?? 0),
+                        item['month'] ?? '-',
                         item['totalBookings'].toString(),
                         currency.format(item['totalRevenue'] ?? 0),
                       ];
