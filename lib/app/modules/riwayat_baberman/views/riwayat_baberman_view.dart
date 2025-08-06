@@ -14,8 +14,12 @@ class RiwayatBabermanView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Riwayat Selesai'),
-        backgroundColor: Colors.green,
+        centerTitle: true,
+        title: const Text(
+          'Riwayat Selesai',
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: Colors.deepPurpleAccent,
       ),
       body: Obx(() {
         if (controller.isLoading.value) {
