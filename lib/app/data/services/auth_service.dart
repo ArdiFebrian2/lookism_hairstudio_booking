@@ -31,26 +31,43 @@ class AuthService {
           email: email,
           phone: phone,
           role: role,
+          status: 'pending', // Tambahkan status default
         );
 
+        // Simpan user ke Firestore
         await users.doc(uid).set(userModel.toJson());
         return uid;
       }
 
       return null;
     } catch (e) {
-      // Handle error sesuai kebutuhan (lempar ke UI, log, dsb.)
       rethrow;
     }
   }
 
-  /// Login dengan email dan password
+  /// Login dengan email dan password + validasi status
   Future<User?> login(String email, String password) async {
     try {
       final credential = await _auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
+
+      final uid = credential.user?.uid;
+      if (uid != null) {
+        final snapshot = await users.doc(uid).get();
+        if (!snapshot.exists) {
+          throw Exception('Data pengguna tidak ditemukan.');
+        }
+
+        final data = snapshot.data() as Map<String, dynamic>;
+        if (data['status'] != 'approved') {
+          // Logout langsung supaya sesi tidak nyangkut
+          await _auth.signOut();
+          throw Exception('Akun Anda belum disetujui oleh admin.');
+        }
+      }
+
       return credential.user;
     } catch (e) {
       rethrow;

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import '../services/auth_service.dart';
 
@@ -23,8 +24,16 @@ class AuthController extends GetxController {
       );
 
       if (uid != null) {
+        // Tambahkan status pending
+        await FirebaseFirestore.instance.collection('users').doc(uid).update({
+          'status': 'pending',
+        });
+
         Get.offAllNamed('/login');
-        Get.snackbar('Berhasil', 'Akun berhasil dibuat');
+        Get.snackbar(
+          'Berhasil',
+          'Akun berhasil dibuat, menunggu persetujuan admin',
+        );
       }
     } catch (e) {
       Get.snackbar('Error', e.toString());

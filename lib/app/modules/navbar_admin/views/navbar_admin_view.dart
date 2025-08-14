@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lookism_hairstudio_booking/app/modules/home_admin/views/home_admin_view.dart';
+import 'package:lookism_hairstudio_booking/app/modules/pending_customer/views/pending_customer_view.dart';
 // import 'package:lookism_hairstudio_booking/app/modules/laporan/views/laporan_view.dart';
 import 'package:lookism_hairstudio_booking/app/modules/profile_admin/views/profile_admin_view.dart';
 import 'package:lookism_hairstudio_booking/app/modules/report/views/report_view.dart';
@@ -15,7 +16,9 @@ class NavbarAdminView extends GetView<NavbarAdminController> {
   Widget build(BuildContext context) {
     final List<Widget> pages = [
       const HomeAdminView(),
+      PendingCustomerView(),
       const ReviewCustomerView(),
+
       ReportView(),
       const ProfileAdminView(),
     ];
@@ -48,9 +51,13 @@ class NavbarAdminView extends GetView<NavbarAdminController> {
             elevation: 0,
             type: BottomNavigationBarType.fixed,
             items: const [
-              BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Home'),
+              BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
               BottomNavigationBarItem(
-                icon: Icon(Icons.receipt_long),
+                icon: Icon(Icons.list_alt),
+                label: 'List Customer',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.reviews),
                 label: 'Review',
               ),
               BottomNavigationBarItem(
@@ -58,7 +65,7 @@ class NavbarAdminView extends GetView<NavbarAdminController> {
                 label: 'Laporan',
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.person_2),
+                icon: Icon(Icons.person),
                 label: 'Profil',
               ),
             ],

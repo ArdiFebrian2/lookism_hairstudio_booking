@@ -1,5 +1,4 @@
 import 'package:get/get.dart';
-import 'package:lookism_hairstudio_booking/app/modules/schedules/controllers/schedules_controller.dart';
 
 import '../modules/admin_notifikasi/bindings/admin_notifikasi_binding.dart';
 import '../modules/admin_notifikasi/views/admin_notifikasi_view.dart';
@@ -31,6 +30,8 @@ import '../modules/navbar_baberman/bindings/navbar_baberman_binding.dart';
 import '../modules/navbar_baberman/views/navbar_baberman_view.dart';
 import '../modules/navbar_customer/bindings/navbar_customer_binding.dart';
 import '../modules/navbar_customer/views/navbar_customer_view.dart';
+import '../modules/pending_customer/bindings/pending_customer_binding.dart';
+import '../modules/pending_customer/views/pending_customer_view.dart';
 import '../modules/profile_admin/bindings/profile_admin_binding.dart';
 import '../modules/profile_admin/views/profile_admin_view.dart';
 import '../modules/profile_baberman/bindings/profile_baberman_binding.dart';
@@ -50,6 +51,7 @@ import '../modules/riwayat/views/riwayat_view.dart';
 import '../modules/riwayat_baberman/bindings/riwayat_baberman_binding.dart';
 import '../modules/riwayat_baberman/views/riwayat_baberman_view.dart';
 import '../modules/schedules/bindings/schedules_binding.dart';
+import '../modules/schedules/controllers/schedules_controller.dart';
 import '../modules/schedules/views/schedules_view.dart';
 import '../modules/service/bindings/service_binding.dart';
 import '../modules/service/views/service_view.dart';
@@ -201,6 +203,11 @@ class AppPages {
       binding: BindingsBuilder(() {
         Get.put(SchedulesController());
       }),
+    ),
+    GetPage(
+      name: _Paths.PENDING_CUSTOMER,
+      page: () => PendingCustomerView(),
+      binding: PendingCustomerBinding(),
     ),
   ];
 }
