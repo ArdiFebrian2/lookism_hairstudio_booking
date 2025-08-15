@@ -1,4 +1,4 @@
-// TODO Implement this library.
+// time_utils.dart
 import 'package:flutter/material.dart';
 
 class TimeUtils {
@@ -46,6 +46,25 @@ class TimeUtils {
     return endMinutes > startMinutes;
   }
 
+  // Cek apakah dua waktu overlap
+  static bool isTimeOverlap(
+    String startA,
+    String endA,
+    String startB,
+    String endB,
+  ) {
+    final startMinutesA =
+        parseTimeString(startA)!.hour * 60 + parseTimeString(startA)!.minute;
+    final endMinutesA =
+        parseTimeString(endA)!.hour * 60 + parseTimeString(endA)!.minute;
+    final startMinutesB =
+        parseTimeString(startB)!.hour * 60 + parseTimeString(startB)!.minute;
+    final endMinutesB =
+        parseTimeString(endB)!.hour * 60 + parseTimeString(endB)!.minute;
+
+    return (startMinutesB < endMinutesA) && (endMinutesB > startMinutesA);
+  }
+
   // Hitung durasi dalam menit
   static int calculateDurationInMinutes(String startTime, String endTime) {
     final start = parseTimeString(startTime);
@@ -73,8 +92,12 @@ class TimeUtils {
     }
   }
 
-  // Validasi rentang waktu
-  static String? validateTimeRange(String? startTime, String? endTime) {
+  // Validasi rentang waktu + cek bentrok
+  static String? validateTimeRange(
+    String? startTime,
+    String? endTime,
+    List<Map<String, String>> existingSchedules,
+  ) {
     if (startTime == null || startTime.isEmpty) {
       return 'Jam mulai harus diisi';
     }
@@ -102,6 +125,15 @@ class TimeUtils {
       return 'Jam selesai harus lebih dari jam mulai';
     }
 
+    // 🔹 Cek bentrok dengan jadwal yang ada
+    for (var schedule in existingSchedules) {
+      final existingStart = schedule['startTime']!;
+      final existingEnd = schedule['endTime']!;
+      if (isTimeOverlap(existingStart, existingEnd, startTime, endTime)) {
+        return 'Waktu ini bentrok dengan jadwal yang sudah ada';
+      }
+    }
+
     return null; // Valid
   }
 
@@ -112,7 +144,6 @@ class TimeUtils {
     for (int hour = 9; hour <= 22; hour++) {
       suggestions.add(TimeOfDay(hour: hour, minute: 0));
       if (hour != 22) {
-        // Tidak menambah 30 menit untuk jam 22
         suggestions.add(TimeOfDay(hour: hour, minute: 30));
       }
     }
@@ -120,7 +151,7 @@ class TimeUtils {
     return suggestions;
   }
 
-  // Format TimeOfDay ke format 12 jam dengan AM/PM
+  // Format TimeOfDay ke format 12 jam
   static String formatTimeOfDay12(TimeOfDay time) {
     final hour12 = time.hourOfPeriod == 0 ? 12 : time.hourOfPeriod;
     final minute = time.minute.toString().padLeft(2, '0');

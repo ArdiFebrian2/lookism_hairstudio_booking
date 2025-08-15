@@ -50,7 +50,7 @@ class ReportListItem extends StatelessWidget {
                   child: Center(
                     child: Text(
                       '${index + 1}',
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                         color: Colors.deepPurpleAccent,
@@ -63,6 +63,7 @@ class ReportListItem extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      // Bulan
                       Text(
                         item['month'] ?? '-',
                         style: const TextStyle(
@@ -71,7 +72,42 @@ class ReportListItem extends StatelessWidget {
                           color: Colors.black87,
                         ),
                       ),
+                      const SizedBox(height: 2),
+
+                      // Hari
+                      Text(
+                        item['day'] ?? '-',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey.shade700,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+
+                      // Nama Baberman
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.person_outline,
+                            size: 16,
+                            color: Colors.blue.shade600,
+                          ),
+                          const SizedBox(width: 4),
+                          Expanded(
+                            child: Text(
+                              item['barbermanName'] ?? '-',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey.shade700,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
                       const SizedBox(height: 4),
+
+                      // Total Booking
                       Row(
                         children: [
                           Icon(
@@ -90,6 +126,8 @@ class ReportListItem extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: 4),
+
+                      // Total Pendapatan
                       Row(
                         children: [
                           Icon(

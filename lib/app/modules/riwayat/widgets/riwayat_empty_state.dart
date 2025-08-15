@@ -52,30 +52,30 @@ class RiwayatEmptyState extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 32),
-            ElevatedButton.icon(
-              onPressed: () {
-                // Navigate to booking page
-                Get.back(); // Or navigate to home/booking page
-              },
-              icon: const Icon(Icons.add_rounded),
-              label: const Text('Mulai Booking'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF6366F1),
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 12,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                textStyle: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
-                elevation: 0,
-              ),
-            ),
+            // ElevatedButton.icon(
+            //   onPressed: () {
+            //     // Navigate to booking page
+            //     Get.back(); // Or navigate to home/booking page
+            //   },
+            //   icon: const Icon(Icons.add_rounded),
+            //   label: const Text('Mulai Booking'),
+            //   style: ElevatedButton.styleFrom(
+            //     backgroundColor: const Color(0xFF6366F1),
+            //     foregroundColor: Colors.white,
+            //     padding: const EdgeInsets.symmetric(
+            //       horizontal: 24,
+            //       vertical: 12,
+            //     ),
+            //     shape: RoundedRectangleBorder(
+            //       borderRadius: BorderRadius.circular(12),
+            //     ),
+            //     textStyle: const TextStyle(
+            //       fontSize: 16,
+            //       fontWeight: FontWeight.w600,
+            //     ),
+            //     elevation: 0,
+            //   ),
+            // ),
           ],
         ),
       ),

@@ -91,10 +91,10 @@ class ProfileCustomerView extends GetView<ProfileCustomerController> {
           const SizedBox(height: 40),
           _buildProfileHeader(),
           const SizedBox(height: 40),
-          _buildProfileStats(),
+          // _buildProfileStats(),
           const SizedBox(height: 30),
-          _buildMenuItems(),
-          const SizedBox(height: 30),
+          // _buildMenuItems(),
+          const SizedBox(height: 280),
           _buildLogoutButton(),
           const SizedBox(height: 20),
         ],
@@ -155,21 +155,6 @@ class ProfileCustomerView extends GetView<ProfileCustomerController> {
           ),
         ),
         const SizedBox(height: 8),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-          decoration: BoxDecoration(
-            color: const Color(0xFF6366F1).withOpacity(0.1),
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: const Text(
-            'Pengguna Premium',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: Color(0xFF6366F1),
-            ),
-          ),
-        ),
       ],
     );
   }
@@ -218,49 +203,6 @@ class ProfileCustomerView extends GetView<ProfileCustomerController> {
 
   Widget _buildStatDivider() {
     return Container(height: 40, width: 1, color: const Color(0xFFE2E8F0));
-  }
-
-  Widget _buildMenuItems() {
-    final menuItems = [
-      {
-        'icon': Icons.edit_outlined,
-        'title': 'Edit Profil',
-        'subtitle': 'Ubah informasi personal',
-        'onTap': () => _showComingSoon(),
-      },
-      {
-        'icon': Icons.notifications_outlined,
-        'title': 'Notifikasi',
-        'subtitle': 'Pengaturan pemberitahuan',
-        'onTap': () => _showComingSoon(),
-      },
-      {
-        'icon': Icons.security_outlined,
-        'title': 'Keamanan',
-        'subtitle': 'Password & keamanan akun',
-        'onTap': () => _showComingSoon(),
-      },
-      // {
-      //   'icon': Icons.help_outline,
-      //   'title': 'Bantuan',
-      //   'subtitle': 'FAQ & dukungan pelanggan',
-      //   'onTap': () => _showComingSoon(),
-      // },
-    ];
-
-    return Column(
-      children:
-          menuItems
-              .map(
-                (item) => _buildMenuItem(
-                  icon: item['icon'] as IconData,
-                  title: item['title'] as String,
-                  subtitle: item['subtitle'] as String,
-                  onTap: item['onTap'] as VoidCallback,
-                ),
-              )
-              .toList(),
-    );
   }
 
   Widget _buildMenuItem({

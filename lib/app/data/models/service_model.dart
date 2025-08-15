@@ -23,6 +23,9 @@ class ServiceModel {
     required this.updatedAt,
   });
 
+  /// Getter supaya bisa dipanggil service.durationMinutes
+  int get durationMinutes => duration;
+
   factory ServiceModel.fromJson(Map<String, dynamic> json) {
     return ServiceModel(
       id: json['id'],

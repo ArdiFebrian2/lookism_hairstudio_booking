@@ -16,7 +16,7 @@ class HomeCustomerController extends GetxController {
 
   late final String userId;
 
-  /// ✅ NEW: simpan jadwal tersedia
+  /// ✅ Simpan jadwal tersedia
   final availableSchedules = <Map<String, dynamic>>[].obs;
 
   @override
@@ -73,7 +73,7 @@ class HomeCustomerController extends GetxController {
     if (picked != null) {
       selectedDate.value = picked;
 
-      // ✅ Fetch jadwal setelah pilih tanggal
+      // Fetch jadwal setelah pilih tanggal
       if (selectedBarberman.value != null) {
         final formattedDate =
             "${picked.year.toString().padLeft(4, '0')}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}";
@@ -114,7 +114,7 @@ class HomeCustomerController extends GetxController {
         selectedTime.value != null;
   }
 
-  /// ✅ Ambil jadwal tersedia (belum dibooking)
+  /// Ambil jadwal tersedia (belum dibooking)
   Future<void> fetchAvailableSchedules(String barbermanId, String date) async {
     try {
       final snapshot =
@@ -123,11 +123,13 @@ class HomeCustomerController extends GetxController {
               .where('barberId', isEqualTo: barbermanId)
               .where('date', isEqualTo: date)
               .where('isBooked', isEqualTo: false)
-              .orderBy('startTime')
               .get();
 
       availableSchedules.value =
           snapshot.docs.map((doc) => {"id": doc.id, ...doc.data()}).toList();
+
+      // Debug
+      print("📅 Jadwal tersedia: $availableSchedules");
     } catch (e) {
       Get.snackbar("Gagal", "Gagal memuat jadwal: $e");
     }
@@ -147,7 +149,16 @@ class HomeCustomerController extends GetxController {
     return snapshot.docs.isEmpty;
   }
 
-  /// ✅ Submit booking jika jadwal tersedia & belum dibooking
+  /// Helper: normalisasi format waktu "09:00"
+  String _normalizeTime(String time) {
+    final parts = time.split(':');
+    final hour = parts[0].padLeft(2, '0');
+    final minute = parts[1].padLeft(2, '0');
+    return "$hour:$minute";
+  }
+
+  /// Submit booking jika jadwal tersedia
+  /// Submit booking jika jadwal tersedia
   Future<void> submitBooking(ServiceModel service) async {
     if (!validateBookingForm()) {
       Get.snackbar(
@@ -173,35 +184,24 @@ class HomeCustomerController extends GetxController {
 
       final dateStr =
           "${selectedDate.value!.year.toString().padLeft(4, '0')}-${selectedDate.value!.month.toString().padLeft(2, '0')}-${selectedDate.value!.day.toString().padLeft(2, '0')}";
+
       final timeStr =
           "${selectedTime.value!.hour.toString().padLeft(2, '0')}:${selectedTime.value!.minute.toString().padLeft(2, '0')}";
 
-      // ✅ Cek apakah waktu dipilih ada di availableSchedules
-      final selectedSchedule = availableSchedules.firstWhereOrNull(
-        (s) => s['date'] == dateStr && s['startTime'] == timeStr,
-      );
+      print("🔍 Mencari jadwal date=$dateStr, time=$timeStr");
 
-      if (selectedSchedule == null) {
+      // ✅ 1. Cek apakah customer sudah booking hari itu
+      final existingBooking =
+          await FirebaseFirestore.instance
+              .collection('bookings')
+              .where('userId', isEqualTo: userId)
+              .where('dateOnly', isEqualTo: dateStr)
+              .get();
+
+      if (existingBooking.docs.isNotEmpty) {
         Get.snackbar(
-          'Jadwal Baberman tidak tersedia',
-          'Pilih Baberman lain dan waktu yang tersedia',
-          backgroundColor: Colors.orange,
-          colorText: Colors.white,
-          snackPosition: SnackPosition.TOP,
-        );
-        return;
-      }
-
-      // ✅ Cek ulang apakah belum dibooking (ganda)
-      final isAvailable = await isScheduleAvailable(
-        selectedBarberman.value!,
-        bookingDateTime,
-      );
-
-      if (!isAvailable) {
-        Get.snackbar(
-          'Jadwal sudah dibooking',
-          'Waktu ini telah diambil. Pilih jadwal lain.',
+          'Booking Ditolak',
+          'Kamu hanya bisa booking sekali dalam sehari',
           backgroundColor: Colors.red,
           colorText: Colors.white,
           snackPosition: SnackPosition.TOP,
@@ -209,21 +209,62 @@ class HomeCustomerController extends GetxController {
         return;
       }
 
-      // ✅ Tambahkan ke bookings
+      // ✅ 2. Cek bentrokan (overlap) slot waktu
+      final startMinutes =
+          selectedTime.value!.hour * 60 + selectedTime.value!.minute;
+      final endMinutes =
+          startMinutes +
+          (service.durationMinutes ?? 30); // default 30 menit kalau null
+
+      final barbermanBookings =
+          await FirebaseFirestore.instance
+              .collection('bookings')
+              .where('barbermanId', isEqualTo: selectedBarberman.value)
+              .where('dateOnly', isEqualTo: dateStr)
+              .get();
+
+      for (var doc in barbermanBookings.docs) {
+        final data = doc.data();
+        final bookedStart = data['startMinutes'] ?? 0;
+        final bookedEnd = data['endMinutes'] ?? 0;
+
+        final isOverlap = startMinutes < bookedEnd && endMinutes > bookedStart;
+        if (isOverlap) {
+          Get.snackbar(
+            'Slot Bentrok',
+            'Waktu yang kamu pilih berbenturan dengan booking lain',
+            backgroundColor: Colors.orange,
+            colorText: Colors.white,
+            snackPosition: SnackPosition.TOP,
+          );
+          return;
+        }
+      }
+
+      // ✅ 3. Tambahkan booking baru
       await FirebaseFirestore.instance.collection('bookings').add({
         'userId': userId,
         'serviceName': service.name,
         'barbermanId': selectedBarberman.value,
         'datetime': bookingDateTime.toIso8601String(),
+        'dateOnly': dateStr,
+        'startMinutes': startMinutes,
+        'endMinutes': endMinutes,
         'status': 'pending',
         'createdAt': DateTime.now().toIso8601String(),
       });
 
-      // ✅ Tandai jadwal sebagai isBooked: true
-      await FirebaseFirestore.instance
-          .collection('schedules')
-          .doc(selectedSchedule['id'])
-          .update({'isBooked': true});
+      // ✅ 4. Tandai jadwal sebagai isBooked: true
+      final selectedSchedule = availableSchedules.firstWhereOrNull((s) {
+        return s['date'] == dateStr &&
+            _normalizeTime(s['startTime']) == _normalizeTime(timeStr);
+      });
+      if (selectedSchedule != null) {
+        await FirebaseFirestore.instance
+            .collection('schedules')
+            .doc(selectedSchedule['id'])
+            .update({'isBooked': true});
+      }
 
       Get.back(); // Close bottom sheet
       Get.snackbar(
