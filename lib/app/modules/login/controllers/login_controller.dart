@@ -87,7 +87,6 @@ class LoginController extends GetxController {
           );
       }
     } on FirebaseAuthException catch (e) {
-      // 🔹 Handling error login Firebase Auth
       switch (e.code) {
         case 'wrong-password':
           showCustomSnackbar(
@@ -141,7 +140,6 @@ class LoginController extends GetxController {
     }
   }
 
-  // 🔹 Snackbar Custom dengan animasi smooth
   void showCustomSnackbar({
     required String title,
     required String message,

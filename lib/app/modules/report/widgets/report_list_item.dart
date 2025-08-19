@@ -34,7 +34,7 @@ class ReportListItem extends StatelessWidget {
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
           onTap: () {
-            // Handle tap if needed
+            // _showReportDetail(context, item);
           },
           child: Padding(
             padding: const EdgeInsets.all(20),
@@ -44,7 +44,11 @@ class ReportListItem extends StatelessWidget {
                   width: 48,
                   height: 48,
                   decoration: BoxDecoration(
-                    color: Colors.teal.shade50,
+                    gradient: LinearGradient(
+                      colors: [Colors.blue.shade400, Colors.purple.shade400],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Center(
@@ -53,7 +57,7 @@ class ReportListItem extends StatelessWidget {
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
-                        color: Colors.deepPurpleAccent,
+                        color: Colors.white,
                       ),
                     ),
                   ),
@@ -63,26 +67,40 @@ class ReportListItem extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Bulan
-                      Text(
-                        item['month'] ?? '-',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black87,
-                        ),
+                      // Tanggal dan Hari
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              item['date'] ?? '-',
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black87,
+                              ),
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.blue.shade50,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              item['day'] ?? '-',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.blue.shade700,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 2),
-
-                      // Hari
-                      Text(
-                        item['day'] ?? '-',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey.shade700,
-                        ),
-                      ),
-                      const SizedBox(height: 2),
+                      const SizedBox(height: 8),
 
                       // Nama Baberman
                       Row(
@@ -105,43 +123,65 @@ class ReportListItem extends StatelessWidget {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: 6),
 
-                      // Total Booking
+                      // Stats Row
                       Row(
                         children: [
-                          Icon(
-                            Icons.book_outlined,
-                            size: 16,
-                            color: Colors.grey.shade600,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            '${item['totalBookings']} booking',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey.shade600,
+                          // Total Booking
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.orange.shade50,
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.book_outlined,
+                                  size: 14,
+                                  color: Colors.orange.shade600,
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  '${item['totalBookings']} booking',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.orange.shade700,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                        ],
-                      ),
-                      const SizedBox(height: 4),
+                          const SizedBox(width: 8),
 
-                      // Total Pendapatan
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.payments_outlined,
-                            size: 16,
-                            color: Colors.deepPurpleAccent,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            currency.format(item['totalRevenue'] ?? 0),
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.green.shade600,
+                          // Total Pendapatan
+                          Expanded(
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.payments_outlined,
+                                  size: 16,
+                                  color: Colors.green.shade600,
+                                ),
+                                const SizedBox(width: 4),
+                                Expanded(
+                                  child: Text(
+                                    currency.format(item['totalRevenue'] ?? 0),
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.green.shade600,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ],
