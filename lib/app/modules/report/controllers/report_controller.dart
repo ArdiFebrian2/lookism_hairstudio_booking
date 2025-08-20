@@ -9,6 +9,7 @@ class ReportController extends GetxController {
   final reports = <Map<String, dynamic>>[].obs;
   final isLoading = false.obs;
 
+  // Variabel untuk menyimpan filter yang sedang aktif
   String? selectedMonth;
   int? selectedYear;
   DateTime? selectedDate;
@@ -23,27 +24,49 @@ class ReportController extends GetxController {
     isLoading.value = true;
 
     try {
+      // Update filter variables ketika method dipanggil
+      selectedMonth = month;
+      selectedYear = year;
+      selectedDate = date;
+
       Query query = FirebaseFirestore.instance.collection('reports');
 
       if (date != null) {
+        // Filter berdasarkan tanggal spesifik
         final start = DateTime(date.year, date.month, date.day);
         final end = start.add(const Duration(days: 1));
         query = query
             .where('createdAt', isGreaterThanOrEqualTo: start)
             .where('createdAt', isLessThan: end);
-      } else {
-        if (month != null) {
-          query = query.where('month', isEqualTo: month);
-        }
-        if (year != null) {
-          query = query
-              .where('month', isGreaterThanOrEqualTo: '$year-01')
-              .where('month', isLessThanOrEqualTo: '$year-12');
-        }
+      } else if (month != null && year != null) {
+        final m = int.parse(month);
+        final startDate = DateTime(year, m, 1);
+        final endDate =
+            (m == 12)
+                ? DateTime(
+                  year + 1,
+                  1,
+                  1,
+                ) // kalau Desember, ke Januari tahun berikutnya
+                : DateTime(year, m + 1, 1);
+
+        query = query
+            .where('createdAt', isGreaterThanOrEqualTo: startDate)
+            .where('createdAt', isLessThan: endDate);
+      } else if (year != null) {
+        // Filter berdasarkan tahun saja menggunakan createdAt
+        final startDate = DateTime(year, 1, 1);
+        final endDate = DateTime(year + 1, 1, 1);
+        query = query
+            .where('createdAt', isGreaterThanOrEqualTo: startDate)
+            .where('createdAt', isLessThan: endDate);
       }
 
-      // Hindari orderBy error jika month bisa null → urutkan berdasarkan createdAt saja
+      // Urutkan berdasarkan createdAt
       final snapshot = await query.orderBy('createdAt', descending: true).get();
+
+      print('🔍 Query result: ${snapshot.docs.length} documents found');
+      print('🔍 Filter applied - Month: $month, Year: $year, Date: $date');
 
       List<Map<String, dynamic>> tempReports = [];
 
@@ -63,6 +86,10 @@ class ReportController extends GetxController {
         final data = doc.data() as Map<String, dynamic>;
         data['id'] = doc.id;
 
+        // Debug: print document data
+        print('📄 Document ID: ${doc.id}');
+        print('📄 Document data: ${data.keys}');
+
         // Fallback ambil ID baberman
         final babermanId = data['barbermanId'] ?? data['serviceId'];
 
@@ -78,6 +105,8 @@ class ReportController extends GetxController {
             'dd MMM yyyy',
             'id_ID',
           ).format(createdDate); // 12 Agu 2025
+
+          print('📅 CreatedAt: $createdDate');
         } else if (data['createdAt'] is DateTime) {
           data['day'] = DateFormat.EEEE('id_ID').format(data['createdAt']);
           data['date'] = DateFormat(
@@ -87,12 +116,14 @@ class ReportController extends GetxController {
         } else {
           data['day'] = '-';
           data['date'] = '-';
+          print('⚠️ CreatedAt field missing or invalid format');
         }
 
         tempReports.add(data);
       }
 
       reports.value = tempReports;
+      print('✅ Total reports loaded: ${tempReports.length}');
     } catch (e, st) {
       print('❌ Error di fetchReports: $e');
       print(st);
@@ -102,7 +133,58 @@ class ReportController extends GetxController {
     }
   }
 
+  // Method untuk reset filter
+  void resetFilter() {
+    selectedMonth = null;
+    selectedYear = null;
+    selectedDate = null;
+    fetchReports();
+  }
+
+  // Method untuk mendapatkan range tanggal yang lebih akurat
+  String getDateRangeText() {
+    if (selectedDate != null) {
+      return DateFormat('dd MMMM yyyy', 'id_ID').format(selectedDate!);
+    } else if (selectedMonth != null || selectedYear != null) {
+      if (selectedMonth != null && selectedYear != null) {
+        final monthName = DateFormat(
+          'MMMM',
+          'id_ID',
+        ).format(DateTime(selectedYear!, int.parse(selectedMonth!)));
+        return '$monthName $selectedYear';
+      } else if (selectedMonth != null) {
+        final monthName = DateFormat(
+          'MMMM',
+          'id_ID',
+        ).format(DateTime(DateTime.now().year, int.parse(selectedMonth!)));
+        return monthName;
+      } else if (selectedYear != null) {
+        return selectedYear.toString();
+      }
+    }
+    return 'Semua Data';
+  }
+
   Future<void> generatePdf() async {
+    print('🔄 Starting PDF generation...');
+    print('📊 Current reports count: ${reports.length}');
+    print(
+      '🗓️ Selected filters - Month: $selectedMonth, Year: $selectedYear, Date: $selectedDate',
+    );
+
+    // Pastikan ada data untuk dicetak
+    if (reports.isEmpty) {
+      print('❌ No reports data available');
+      Get.snackbar(
+        'Info',
+        'Tidak ada data untuk dicetak. Pastikan filter yang dipilih memiliki data.',
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Get.theme.colorScheme.primary.withOpacity(0.1),
+        colorText: Get.theme.colorScheme.primary,
+      );
+      return;
+    }
+
     final pdf = pw.Document();
     final currency = NumberFormat.currency(
       locale: 'id_ID',
@@ -120,27 +202,8 @@ class ReportController extends GetxController {
       (sum, item) => sum + ((item['totalBookings'] ?? 0) as int),
     );
 
-    // Get date range for report
-    String dateRange = '';
-    if (selectedDate != null) {
-      dateRange = DateFormat('dd MMMM yyyy', 'id_ID').format(selectedDate!);
-    } else if (selectedMonth != null || selectedYear != null) {
-      if (selectedMonth != null && selectedYear != null) {
-        final monthName = DateFormat(
-          'MMMM',
-          'id_ID',
-        ).format(DateTime(selectedYear!, int.parse(selectedMonth!)));
-        dateRange = '$monthName $selectedYear';
-      } else if (selectedMonth != null) {
-        final monthName = DateFormat(
-          'MMMM',
-          'id_ID',
-        ).format(DateTime(DateTime.now().year, int.parse(selectedMonth!)));
-        dateRange = monthName;
-      } else if (selectedYear != null) {
-        dateRange = selectedYear.toString();
-      }
-    }
+    // Get date range for report menggunakan method yang sudah diperbaiki
+    final dateRange = getDateRangeText();
 
     pdf.addPage(
       pw.Page(
@@ -179,13 +242,13 @@ class ReportController extends GetxController {
                       ),
                     ),
                     pw.SizedBox(height: 4),
-                    // pw.Text(
-                    //   'Periode: $dateRange',
-                    //   style: pw.TextStyle(
-                    //     fontSize: 14,
-                    //     color: PdfColors.grey600,
-                    //   ),
-                    // ),
+                    pw.Text(
+                      'Periode: $dateRange',
+                      style: pw.TextStyle(
+                        fontSize: 14,
+                        color: PdfColors.grey600,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -524,8 +587,28 @@ class ReportController extends GetxController {
       ),
     );
 
-    await Printing.layoutPdf(
-      onLayout: (PdfPageFormat format) async => pdf.save(),
-    );
+    try {
+      print('📄 Generating PDF...');
+      await Printing.layoutPdf(
+        onLayout: (PdfPageFormat format) async => pdf.save(),
+      );
+      print('✅ PDF generated successfully');
+      Get.snackbar(
+        'Success',
+        'PDF berhasil dibuat',
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Get.theme.colorScheme.primary.withOpacity(0.1),
+        colorText: Get.theme.colorScheme.primary,
+      );
+    } catch (e) {
+      print('❌ Error generate PDF: $e');
+      Get.snackbar(
+        'Error',
+        'Gagal membuat PDF: $e',
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Get.theme.colorScheme.error.withOpacity(0.1),
+        colorText: Get.theme.colorScheme.error,
+      );
+    }
   }
 }

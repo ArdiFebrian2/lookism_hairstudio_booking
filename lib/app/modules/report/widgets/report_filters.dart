@@ -10,9 +10,7 @@ class ReportFilters extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final fieldWidth =
-        (screenWidth - 16 * 2 - 12) /
-        2; // padding kiri-kanan + spacing antar field
+    final fieldWidth = (screenWidth - 16 * 2 - 12) / 2;
 
     return SingleChildScrollView(
       child: Container(
@@ -42,17 +40,41 @@ class ReportFilters extends StatelessWidget {
             ),
             const SizedBox(height: 16),
 
-            // ✅ Gunakan Wrap agar tidak overflow di layar sempit
-            Wrap(
-              spacing: 12,
-              runSpacing: 12,
+            // ✅ Dropdown Bulan & Tahun
+            Row(
               children: [
-                SizedBox(width: fieldWidth, child: _buildMonthDropdown()),
-                SizedBox(width: fieldWidth, child: _buildYearDropdown()),
+                Expanded(child: _buildMonthDropdown()),
+                const SizedBox(width: 12),
+                Expanded(child: _buildYearDropdown()),
               ],
             ),
+
             const SizedBox(height: 16),
+            // ✅ Date Picker
             _buildDatePicker(context),
+
+            const SizedBox(height: 20),
+
+            // ✅ Tombol Cetak
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                icon: const Icon(Icons.print, size: 20),
+                label: const Text(
+                  "Cetak Laporan",
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.deepPurpleAccent,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                onPressed: () => controller.generatePdf(),
+              ),
+            ),
           ],
         ),
       ),
@@ -60,43 +82,55 @@ class ReportFilters extends StatelessWidget {
   }
 
   Widget _buildMonthDropdown() {
-    return DropdownButtonFormField<String>(
-      value: controller.selectedMonth,
-      decoration: _inputDecoration(label: 'Bulan', icon: Icons.calendar_month),
-      items: List.generate(12, (index) {
-        final month = (index + 1).toString().padLeft(2, '0');
-        return DropdownMenuItem(
-          value: '${DateTime.now().year}-$month',
-          child: Text(
-            DateFormat.MMMM('id_ID').format(DateTime(0, index + 1)),
-            style: const TextStyle(fontSize: 14),
-          ),
-        );
-      }),
-      onChanged: (value) {
-        controller.selectedMonth = value;
-        controller.selectedDate = null;
-        controller.fetchReports(month: value);
-      },
+    return SizedBox(
+      width: double.infinity, // Biar dropdown ikut penuh tapi tetap aman
+      child: DropdownButtonFormField<String>(
+        value: controller.selectedMonth,
+        decoration: _inputDecoration(
+          label: 'Bulan',
+          icon: Icons.calendar_month,
+        ),
+        isExpanded: true, // Supaya teks tidak terpotong
+        items: List.generate(12, (index) {
+          final month = (index + 1).toString().padLeft(2, '0');
+          return DropdownMenuItem(
+            value: month,
+            child: Text(
+              DateFormat.MMMM('id_ID').format(DateTime(0, index + 1)),
+              style: const TextStyle(fontSize: 14),
+              overflow: TextOverflow.ellipsis, // kalau teks kepanjangan
+            ),
+          );
+        }),
+        onChanged: (value) {
+          controller.selectedMonth = value;
+          controller.selectedDate = null;
+          controller.fetchReports(month: value, year: controller.selectedYear);
+        },
+      ),
     );
   }
 
   Widget _buildYearDropdown() {
-    return DropdownButtonFormField<int>(
-      value: controller.selectedYear,
-      decoration: _inputDecoration(label: 'Tahun', icon: Icons.date_range),
-      items: List.generate(5, (index) {
-        final year = DateTime.now().year - index;
-        return DropdownMenuItem(
-          value: year,
-          child: Text('$year', style: const TextStyle(fontSize: 14)),
-        );
-      }),
-      onChanged: (value) {
-        controller.selectedYear = value;
-        controller.selectedDate = null;
-        controller.fetchReports(month: controller.selectedMonth, year: value);
-      },
+    return SizedBox(
+      width: double.infinity,
+      child: DropdownButtonFormField<int>(
+        value: controller.selectedYear,
+        decoration: _inputDecoration(label: 'Tahun', icon: Icons.date_range),
+        isExpanded: true,
+        items: List.generate(5, (index) {
+          final year = DateTime.now().year - index;
+          return DropdownMenuItem(
+            value: year,
+            child: Text('$year', style: const TextStyle(fontSize: 14)),
+          );
+        }),
+        onChanged: (value) {
+          controller.selectedYear = value;
+          controller.selectedDate = null;
+          controller.fetchReports(month: controller.selectedMonth, year: value);
+        },
+      ),
     );
   }
 
@@ -121,7 +155,7 @@ class ReportFilters extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 16),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
-            side: BorderSide(color: Colors.deepPurple),
+            side: const BorderSide(color: Colors.deepPurple),
           ),
         ),
         onPressed: () async {
@@ -133,7 +167,7 @@ class ReportFilters extends StatelessWidget {
             builder: (context, child) {
               return Theme(
                 data: Theme.of(context).copyWith(
-                  colorScheme: ColorScheme.light(
+                  colorScheme: const ColorScheme.light(
                     primary: Colors.deepPurpleAccent,
                     onPrimary: Colors.white,
                     surface: Colors.white,
@@ -173,7 +207,7 @@ class ReportFilters extends StatelessWidget {
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: Colors.deepPurpleAccent, width: 2),
+        borderSide: const BorderSide(color: Colors.deepPurpleAccent, width: 2),
       ),
       filled: true,
       fillColor: Colors.grey.shade50,

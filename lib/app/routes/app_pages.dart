@@ -1,9 +1,5 @@
 import 'package:get/get.dart';
 
-import '../modules/admin_notifikasi/bindings/admin_notifikasi_binding.dart';
-import '../modules/admin_notifikasi/views/admin_notifikasi_view.dart';
-import '../modules/admin_validate/bindings/admin_validate_binding.dart';
-import '../modules/admin_validate/views/admin_validate_view.dart';
 import '../modules/booking/bindings/booking_binding.dart';
 import '../modules/booking/views/booking_view.dart';
 import '../modules/home/bindings/home_binding.dart';
@@ -106,11 +102,7 @@ class AppPages {
       page: () => NavbarAdminView(),
       binding: NavbarAdminBinding(),
     ),
-    GetPage(
-      name: _Paths.ADMIN_NOTIFIKASI,
-      page: () => const AdminNotifikasiView(),
-      binding: AdminNotifikasiBinding(),
-    ),
+
     GetPage(
       name: _Paths.LAPORAN,
       page: () => const LaporanView(),
@@ -166,11 +158,7 @@ class AppPages {
       page: () => const ProfileBabermanView(),
       binding: ProfileBabermanBinding(),
     ),
-    GetPage(
-      name: _Paths.ADMIN_VALIDATE,
-      page: () => const AdminValidateView(),
-      binding: AdminValidateBinding(),
-    ),
+
     GetPage(
       name: _Paths.SERVICE,
       page: () => ServiceView(),
