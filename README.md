@@ -48,7 +48,7 @@ Aplikasi mobile untuk melakukan booking layanan potong rambut di Lookism Hairstu
 
 ---
 
-## 📱
+## 📱Mockup
 
 <p align="center">
   <img src="assets/images/Bookingbarber.png" alt="Lookism Hairstudio Booking App" width="720">
