@@ -44,8 +44,18 @@ Aplikasi mobile untuk melakukan booking layanan potong rambut di Lookism Hairstu
 - 🔥 **Firebase**
   - Firebase Auth (Autentikasi)
   - Firestore (Database)
-  - Firebase Cloud Messaging (Notifikasi)
 - 🎨 **Google Fonts** - Tampilan teks lebih menarik
 
+---
 
+## 📱 Mockup
 
+<p align="center">
+  <img src="assets/images/Bookingbarber.png" alt="Lookism Hairstudio Booking App" width="720">
+</p>
+
+> Letakkan gambar mockup di: `assets/mockups/lookism_booking_mockup.png`
+
+<!-- Alternatif Markdown murni:
+![Mockup Lookism Hairstudio Booking App](assets/mockups/lookism_booking_mockup.png)
+-->
