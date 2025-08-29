@@ -177,7 +177,7 @@ class BookingBottomSheet extends GetView<HomeCustomerController> {
                   'Rp ${NumberFormat('#,###', 'id_ID').format(service.price)}',
                   style: const TextStyle(
                     fontSize: 16,
-                    color: Colors.deepPurple,
+                    color: Colors.pinkAccent,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -435,12 +435,15 @@ class BookingBottomSheet extends GetView<HomeCustomerController> {
         height: 56,
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Colors.deepPurple.shade400, Colors.deepPurple.shade600],
+            colors: [
+              Color.fromARGB(255, 176, 78, 164),
+              Color.fromARGB(255, 176, 78, 164).withOpacity(0.8),
+            ],
           ),
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.deepPurple.withOpacity(0.3),
+              color: Colors.pinkAccent,
               blurRadius: 10,
               offset: const Offset(0, 5),
             ),

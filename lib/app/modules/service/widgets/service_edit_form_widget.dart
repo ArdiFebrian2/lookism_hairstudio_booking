@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:lookism_hairstudio_booking/app/data/models/service_model.dart';
 import 'package:lookism_hairstudio_booking/app/modules/service/controllers/service_controller.dart';
 
@@ -19,6 +21,37 @@ class ServiceEditFormWidget extends StatefulWidget {
   State<ServiceEditFormWidget> createState() => _ServiceEditFormWidgetState();
 }
 
+/// Custom formatter untuk format currency Rupiah
+class CurrencyFormatter extends TextInputFormatter {
+  final NumberFormat _formatter = NumberFormat.currency(
+    locale: 'id_ID',
+    symbol: 'Rp ',
+    decimalDigits: 0,
+  );
+
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    if (newValue.text.isEmpty) {
+      return newValue.copyWith(text: '');
+    }
+
+    // ambil angka saja
+    String numericString = newValue.text.replaceAll(RegExp(r'[^0-9]'), '');
+    if (numericString.isEmpty) return newValue.copyWith(text: '');
+
+    final number = int.parse(numericString);
+    final newText = _formatter.format(number);
+
+    return TextEditingValue(
+      text: newText,
+      selection: TextSelection.collapsed(offset: newText.length),
+    );
+  }
+}
+
 class _ServiceEditFormWidgetState extends State<ServiceEditFormWidget> {
   final ServiceController controller = Get.find<ServiceController>();
   final _formKey = GlobalKey<FormState>();
@@ -34,7 +67,16 @@ class _ServiceEditFormWidgetState extends State<ServiceEditFormWidget> {
     super.initState();
     nameC = TextEditingController(text: widget.service.name);
     descC = TextEditingController(text: widget.service.description);
-    priceC = TextEditingController(text: widget.service.price.toString());
+
+    // Format harga awal ke Rp
+    priceC = TextEditingController(
+      text: NumberFormat.currency(
+        locale: 'id_ID',
+        symbol: 'Rp ',
+        decimalDigits: 0,
+      ).format(widget.service.price),
+    );
+
     durationC = TextEditingController(text: widget.service.duration.toString());
     isActive = widget.service.isActive.obs;
   }
@@ -42,10 +84,12 @@ class _ServiceEditFormWidgetState extends State<ServiceEditFormWidget> {
   void _handleSubmit() {
     if (!_formKey.currentState!.validate()) return;
 
+    // Ambil angka murni dari text field
+    String rawPrice = priceC.text.replaceAll(RegExp(r'[^0-9]'), '');
     final updatedService = ServiceModel(
       name: nameC.text,
       description: descC.text,
-      price: double.tryParse(priceC.text) ?? 0.0,
+      price: double.tryParse(rawPrice) ?? 0.0,
       duration: int.tryParse(durationC.text) ?? 0,
       isActive: isActive.value,
       createdAt: widget.service.createdAt,
@@ -132,6 +176,7 @@ class _ServiceEditFormWidgetState extends State<ServiceEditFormWidget> {
                               label: 'Harga (Rp)',
                               icon: Icons.attach_money,
                               keyboardType: TextInputType.number,
+                              inputFormatters: [CurrencyFormatter()],
                               validator:
                                   (val) =>
                                       val!.isEmpty ? 'Harga wajib diisi' : null,
@@ -241,6 +286,7 @@ class _ServiceEditFormWidgetState extends State<ServiceEditFormWidget> {
     int maxLines = 1,
     TextInputType? keyboardType,
     String? Function(String?)? validator,
+    List<TextInputFormatter>? inputFormatters,
   }) {
     return TextFormField(
       controller: controller,
@@ -265,6 +311,7 @@ class _ServiceEditFormWidgetState extends State<ServiceEditFormWidget> {
       maxLines: maxLines,
       keyboardType: keyboardType,
       validator: validator,
+      inputFormatters: inputFormatters,
     );
   }
 

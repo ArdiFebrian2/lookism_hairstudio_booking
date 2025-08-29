@@ -188,7 +188,7 @@ class ServiceCard extends StatelessWidget {
             onPressed: onBookPressed,
             label: const Text('Booking Sekarang'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.deepPurple,
+              backgroundColor: Colors.pinkAccent,
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
